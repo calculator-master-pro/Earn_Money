@@ -1,0 +1,2952 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Trust Invest - Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+    
+    <!-- Firebase SDKs (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+    <style>
+        :root {
+            --primary-gold: #d4af37;
+            --primary-dark: #b4941f;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f1f5f9;
+            --text-gray: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --gradient-gold: linear-gradient(135deg, #d4af37, #f6e07b, #d4af37);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding-bottom: 80px; /* Space for footer */
+            overflow-x: hidden;
+            user-select: none; /* App-like feel */
+        }
+
+        /* --- Animations --- */
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* --- Auth Styles --- */
+        #authOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+            overflow-y: auto; padding: 20px 0;
+        }
+        .auth-card {
+            background: var(--card-bg); padding: 30px; width: 90%; max-width: 400px;
+            border-radius: 15px; border: 1px solid var(--primary-gold);
+            text-align: center; margin: auto;
+        }
+        .auth-logo i { font-size: 50px; color: var(--primary-gold); margin-bottom: 15px; }
+        
+        .input-group { margin-bottom: 15px; position: relative; text-align: left; }
+        .input-group label { display: block; font-size: 12px; color: var(--text-gray); margin-bottom: 5px; }
+        
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
+            color: white; border-radius: 8px; outline: none; padding-right: 40px;
+        }
+        
+        /* File Upload Style */
+        .file-upload-wrapper {
+            position: relative; margin-bottom: 15px;
+            border: 1px dashed #334155; padding: 15px; border-radius: 8px;
+            text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .file-upload-wrapper:hover { border-color: var(--primary-gold); background: rgba(212, 175, 55, 0.05); }
+        .file-upload-wrapper input[type="file"] {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;
+        }
+        
+        /* Number input clean style */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        
+        .password-toggle {
+            position: absolute; right: 12px; top: 38px;
+            color: var(--text-gray); cursor: pointer; font-size: 14px;
+        }
+        .input-group.no-label .password-toggle { top: 14px; }
+
+        .radio-group { display: flex; justify-content: space-around; margin-bottom: 15px; }
+        .radio-item { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        
+        .checkbox-group { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 15px; text-align: left; }
+        .checkbox-group a { color: var(--primary-gold); text-decoration: underline; }
+
+        .gold-btn {
+            width: 100%; padding: 12px; background: var(--gradient-gold);
+            border: none; color: #000; font-weight: bold; border-radius: 8px;
+            cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.2s;
+        }
+        .gold-btn:active { transform: scale(0.98); }
+        .gold-btn:disabled {
+            background: #555; cursor: not-allowed; color: #888; opacity: 0.7;
+        }
+
+        .forgot-link {
+            display: block; margin-top: 10px; font-size: 12px; color: var(--danger); cursor: pointer; text-decoration: none;
+        }
+
+        /* --- Main App Styles --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; display: none; }
+        
+        .user-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: linear-gradient(to right, #1e293b, #0f172a);
+            border-radius: 15px; margin-bottom: 20px; border-bottom: 2px solid var(--primary-gold);
+        }
+        .user-info h2 { font-size: 18px; color: var(--primary-gold); }
+        .user-info p { font-size: 12px; color: var(--text-gray); }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        .icon-btn { position: relative; cursor: pointer; color: var(--text-light); font-size: 20px; }
+        .notif-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--danger);
+            color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; display: none;
+        }
+        .balance-badge {
+            background: rgba(212, 175, 55, 0.2); color: var(--primary-gold);
+            padding: 5px 12px; border-radius: 20px; font-weight: bold;
+        }
+
+        .main-balance-card {
+            background: var(--gradient-gold); color: #000;
+            padding: 25px; border-radius: 15px; text-align: center;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); margin-bottom: 20px;
+        }
+        .balance-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .balance-amount { font-size: 40px; font-weight: 800; margin: 10px 0; }
+        
+        .income-wallet-display {
+            background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 10px;
+            font-size: 13px; margin-top: 10px; display: inline-block;
+        }
+
+        .action-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;
+        }
+        .action-item {
+            background: var(--card-bg); padding: 15px 5px; border-radius: 10px;
+            text-align: center; font-size: 12px; cursor: pointer;
+            border: 1px solid #334155; transition: 0.3s;
+        }
+        .action-item:active { transform: scale(0.95); }
+        .action-item i { font-size: 24px; color: var(--primary-gold); margin-bottom: 8px; }
+
+        .marquee-container {
+            background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 30px;
+            display: flex; align-items: center; margin-bottom: 20px;
+        }
+        .marquee-icon { color: var(--primary-gold); margin-right: 10px; padding-left: 10px; }
+        marquee { font-size: 13px; color: var(--text-gray); }
+
+        .vip-card {
+            background: var(--card-bg); border-radius: 15px; overflow: hidden;
+            margin-bottom: 15px; border: 1px solid #334155; position: relative;
+        }
+        .vip-card.active-plan {
+            border: 2px solid var(--primary-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            order: -1;
+        }
+        
+        .vip-header {
+            background: linear-gradient(90deg, #1e293b, #0f172a); padding: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+        .vip-card.active-plan .vip-header { background: var(--primary-gold); }
+        .vip-card.active-plan .vip-header span { color: black !important; }
+
+        .vip-badge {
+            background: var(--primary-gold); color: #000; padding: 2px 8px;
+            border-radius: 4px; font-size: 12px; font-weight: bold;
+        }
+        .vip-body { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .vip-stat div:first-child { font-size: 12px; color: var(--text-gray); }
+        .vip-stat div:last-child { font-size: 16px; font-weight: bold; color: var(--text-light); }
+        .vip-price { font-size: 22px; color: var(--primary-gold); font-weight: bold; }
+        .invest-btn {
+            width: 100%; background: var(--primary-gold); border: none; padding: 12px;
+            font-weight: bold; cursor: pointer; color: #000; transition: 0.3s;
+        }
+        .invest-btn:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
+
+        .footer-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b;
+            display: flex; justify-content: space-around; padding: 12px 0;
+            border-top: 1px solid #334155; box-shadow: 0 -5px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        /* Mobile Keyboard Fix */
+        @media (max-height: 500px) {
+            .footer-nav { display: none; }
+            body { padding-bottom: 20px; }
+        }
+
+        .nav-item { text-align: center; color: var(--text-gray); font-size: 10px; cursor: pointer; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; display: block; }
+        .nav-item.active { color: var(--primary-gold); }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; overflow-y: auto;
+        }
+        .modal-content {
+            background: var(--card-bg); width: 95%; max-width: 450px; padding: 25px;
+            border-radius: 15px; border: 1px solid var(--primary-gold); position: relative; margin: 20px auto;
+        }
+        .close-btn { position: absolute; right: 20px; top: 20px; color: white; cursor: pointer; font-size: 24px; }
+        .modal h2 { color: var(--primary-gold); margin-bottom: 20px; text-align: center; }
+        .info-box {
+            background: rgba(212, 175, 55, 0.1); padding: 15px; border-radius: 8px;
+            margin-bottom: 15px; border-left: 3px solid var(--primary-gold); font-size: 13px;
+        }
+
+        .copy-btn {
+            background: none; border: 1px solid var(--primary-gold); color: var(--primary-gold);
+            padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 8px;
+        }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
+        .dep-chip {
+            background: #334155; padding: 8px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
+            border: 1px solid #475569; transition: 0.2s; text-align: center;
+        }
+        .dep-chip span { display: block; color: var(--primary-gold); font-weight: bold; }
+        .dep-chip:hover { border-color: var(--primary-gold); background: #1e293b; }
+
+        /* --- Task & Quiz Styles --- */
+        /* Removed .task-circle and daily task specific styles as requested */
+        
+        .quiz-btn {
+            background: linear-gradient(45deg, #FF512F 0%, #DD2476 100%);
+            color: white; padding: 15px; width: 100%; border-radius: 10px;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 20px;
+        }
+        
+        .captcha-btn {
+            background: linear-gradient(45deg, #1fa2ff 0%, #12d8fa 100%);
+            color: white; padding: 15px; width: 100%; border-radius: 10px;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px;
+        }
+
+        /* --- Captcha Styles --- */
+        .captcha-box {
+            background: #334155;
+            padding: 20px;
+            text-align: center;
+            font-size: 30px;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 5px;
+            color: var(--text-light);
+            border: 2px dashed var(--primary-gold);
+            margin-bottom: 20px;
+            font-weight: bold;
+            user-select: none;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMzM0MTU1Ij48L3JlY3Q+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM0NzU1NjkiPjwvcmVjdD4KPC9zdmc+');
+        }
+
+        /* --- Lottery Styles --- */
+        .ticket-card {
+            background: #1e293b;
+            border: 1px solid var(--primary-gold);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .ticket-card::before, .ticket-card::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--bg-dark);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .ticket-card::before { left: -10px; }
+        .ticket-card::after { right: -10px; }
+        .ticket-id { font-family: monospace; font-size: 18px; color: var(--primary-gold); font-weight: bold; }
+
+        /* --- Spin Wheel Styles --- */
+        .spin-btn {
+            background: linear-gradient(45deg, #8E2DE2 0%, #4A00E0 100%);
+            color: white; padding: 15px; width: 100%; border-radius: 10px;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px;
+        }
+        .wheel-container {
+            position: relative; width: 250px; height: 250px; margin: 0 auto 20px;
+            border-radius: 50%; border: 5px solid var(--primary-gold); overflow: hidden;
+            background: conic-gradient(
+                #f6e07b 0deg 60deg, 
+                #1e293b 60deg 120deg, 
+                #f6e07b 120deg 180deg, 
+                #1e293b 180deg 240deg, 
+                #f6e07b 240deg 300deg, 
+                #1e293b 300deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+        .wheel-arrow {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid var(--danger);
+            z-index: 10;
+        }
+        .spin-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background: white; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-weight: bold; color: black;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5); z-index: 5;
+        }
+
+        /* --- Scratch Card Styles --- */
+        .scratch-wrapper {
+            position: relative; width: 300px; height: 150px; margin: 20px auto;
+            border-radius: 10px; overflow: hidden; border: 2px solid var(--primary-gold);
+            user-select: none; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        .scratch-reward {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            background: white; color: black; display: flex; justify-content: center; align-items: center;
+            flex-direction: column; z-index: 1;
+        }
+        canvas#scratchCanvas {
+            position: absolute; top: 0; left: 0; z-index: 2; cursor: pointer;
+        }
+
+        /* --- Job Styles (Enhanced) --- */
+        .job-btn {
+            background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%);
+            color: white; padding: 15px; width: 100%; border-radius: 10px;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px;
+        }
+        .job-card {
+            background: #1e293b; border: 1px solid #334155; padding: 15px;
+            border-radius: 10px; margin-bottom: 10px; position: relative;
+        }
+        .job-card h4 { color: white; font-size: 16px; margin-bottom: 5px; }
+        .job-meta { font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .job-reward { color: var(--primary-gold); font-weight: bold; font-size: 14px; }
+        .job-action-btn {
+            background: var(--primary-gold); border: none; padding: 8px 15px; width: 100%;
+            border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; margin-top: 5px;
+        }
+        
+        /* Job Tabs */
+        .job-nav { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .job-nav-item { 
+            white-space: nowrap; padding: 8px 15px; background: #334155; border-radius: 20px; 
+            font-size: 12px; cursor: pointer; color: #ccc;
+        }
+        .job-nav-item.active { background: var(--primary-gold); color: black; font-weight: bold; }
+
+        /* --- Quiz Overlay Page --- */
+        #quizOverlay, #jobOverlay, #videoOverlay, #predictionOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 5000; overflow-y: auto; padding: 20px; padding-bottom: 80px;
+        }
+        .quiz-card {
+            background: var(--card-bg); border-radius: 15px; padding: 20px; margin-top: 20px;
+            border: 1px solid #334155;
+        }
+        .quiz-question { font-size: 18px; margin-bottom: 20px; color: white; font-weight: bold; }
+        .quiz-option {
+            background: #0f172a; border: 1px solid #334155; padding: 15px;
+            border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .quiz-option:hover { border-color: var(--primary-gold); }
+        .quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+
+        /* --- Video Zone Styles --- */
+        .video-btn {
+            background: linear-gradient(45deg, #cc2b5e 0%, #753a88 100%);
+            color: white; padding: 15px; width: 100%; border-radius: 10px;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px;
+        }
+        .video-item {
+            background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155;
+        }
+        .video-info h4 { font-size: 14px; margin-bottom: 5px; color: #fff; }
+        .video-info p { font-size: 12px; color: #aaa; }
+        .video-action button { 
+            background: var(--primary-gold); border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;
+        }
+
+        /* --- Prediction Styles --- */
+        .prediction-btn {
+            background: linear-gradient(45deg, #2193b0 0%, #6dd5ed 100%);
+            color: white; padding: 15px; width: 100%; border-radius: 10px;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px;
+        }
+        .pred-card {
+            background: #1e293b; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #334155;
+            text-align: center;
+        }
+        .pred-question { font-size: 16px; margin-bottom: 15px; font-weight: bold; color: white; }
+        .pred-options { display: flex; gap: 15px; justify-content: center; }
+        .pred-opt-btn {
+            flex: 1; padding: 15px; background: #0f172a; border: 2px solid #334155; border-radius: 10px;
+            cursor: pointer; transition: 0.3s; color: #ccc;
+        }
+        .pred-opt-btn.selected { border-color: var(--primary-gold); background: rgba(212, 175, 55, 0.1); color: white; }
+        .pred-status { margin-top: 10px; font-size: 12px; color: #aaa; }
+
+        /* --- Ad Timer Overlay --- */
+        #adTimerOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 6000;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .timer-circle {
+            width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--primary-gold);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 30px; font-weight: bold; color: var(--primary-gold); margin-bottom: 20px;
+        }
+
+        /* History Page Styles */
+        .full-page-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 4000; overflow-y: auto; padding: 20px;
+        }
+        .page-header {
+            display: flex; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px;
+        }
+        .back-btn { font-size: 24px; color: var(--primary-gold); margin-right: 15px; cursor: pointer; }
+        .history-tabs { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .h-tab { padding: 8px 20px; border-radius: 20px; background: #1e293b; color: #aaa; cursor: pointer; }
+        .h-tab.active { background: var(--primary-gold); color: #000; font-weight: bold; }
+        
+        .history-item {
+            background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 10px;
+            border-left: 4px solid var(--primary-gold); display: flex; justify-content: space-between; align-items: center;
+        }
+        .status-badge { padding: 3px 8px; border-radius: 5px; font-size: 11px; text-transform: uppercase; }
+        .status-pending { background: #f59e0b; color: black; }
+        .status-approved { background: #10b981; color: white; }
+        .status-rejected { background: #ef4444; color: white; }
+
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- New Team Tree CSS --- */
+        .upline-card {
+            background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981;
+            border-radius: 10px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;
+        }
+        .upline-icon { font-size: 30px; color: #10b981; }
+        
+        .team-node { margin-left: 10px; display: none; border-left: 1px dashed #475569; }
+        .team-node.open { display: block; }
+        .team-member-card {
+            background: #1e293b; padding: 12px; margin: 8px 0 8px 10px; border-radius: 8px;
+            border: 1px solid #334155; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            position: relative;
+        }
+        .team-member-card:hover { border-color: var(--primary-gold); }
+        .team-member-card::before {
+            content: ''; position: absolute; left: -11px; top: 50%; width: 10px; height: 1px; background: #475569;
+        }
+        .member-info div:first-child { font-weight: bold; color: white; font-size: 14px; }
+        .member-info div:last-child { font-size: 11px; color: #94a3b8; }
+        .expand-icon { color: var(--primary-gold); transition: 0.3s; }
+        .expanded > .team-member-card .expand-icon { transform: rotate(90deg); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Auth Overlay -->
+    <div id="authOverlay">
+        <div class="auth-card" id="loginCard">
+            <div class="auth-logo"><i class="fas fa-coins"></i></div>
+            <h2 style="color:white; margin-bottom:20px;">স্বাগতম</h2>
+            <form id="loginForm">
+                <div class="input-group no-label">
+                    <input type="email" id="loginEmail" placeholder="ইমেইল" required>
+                </div>
+                <div class="input-group no-label">
+                    <input type="password" id="loginPassword" placeholder="পাসওয়ার্ড" required>
+                    <i class="fas fa-eye password-toggle" onclick="togglePass('loginPassword', this)"></i>
+                </div>
+                <button type="submit" class="gold-btn">লগইন করুন</button>
+            </form>
+            <a onclick="resetPassword()" class="forgot-link">পাসওয়ার্ড ভুলে গেছেন?</a>
+            <p style="margin-top:15px; font-size:14px;">একাউন্ট নেই? <a href="#" style="color:var(--primary-gold);" onclick="toggleAuth('signup')">সাইন আপ</a></p>
+        </div>
+
+        <div class="auth-card" id="signupCard" style="display:none;">
+            <div class="auth-logo"><i class="fas fa-user-plus"></i></div>
+            <h2 style="color:white; margin-bottom:20px;">নতুন একাউন্ট</h2>
+            <form id="signupForm">
+                <div class="input-group no-label">
+                    <input type="text" id="signupName" placeholder="আপনার নাম" required>
+                </div>
+                <div class="radio-group">
+                    <label class="radio-item"><input type="radio" name="gender" value="male" checked> পুরুষ</label>
+                    <label class="radio-item"><input type="radio" name="gender" value="female"> মহিলা</label>
+                </div>
+                <div class="input-group no-label">
+                    <input type="email" id="signupEmail" placeholder="ইমেইল" required>
+                </div>
+                <div class="input-group no-label">
+                    <input type="password" id="signupPassword" placeholder="পাসওয়ার্ড (৬+ সংখ্যা)" required>
+                    <i class="fas fa-eye password-toggle" onclick="togglePass('signupPassword', this)"></i>
+                </div>
+                <div class="input-group no-label">
+                    <input type="password" id="signupConfirmPassword" placeholder="কনফার্ম পাসওয়ার্ড" required>
+                    <i class="fas fa-eye password-toggle" onclick="togglePass('signupConfirmPassword', this)"></i>
+                </div>
+                <div class="input-group no-label">
+                    <input type="text" id="signupRefer" placeholder="রেফারেল কোড (ঐচ্ছিক)">
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="privacyCheck" required>
+                    <span>আমি <a href="#" onclick="openPrivacyPolicy(event)">গোপনীয়তা এবং নীতিমালা</a> এর সাথে একমত।</span>
+                </div>
+                <button type="submit" class="gold-btn">রেজিস্টার করুন</button>
+            </form>
+            <p style="margin-top:15px; font-size:14px;">একাউন্ট আছে? <a href="#" style="color:var(--primary-gold);" onclick="toggleAuth('login')">লগইন</a></p>
+        </div>
+    </div>
+
+    <!-- Verification Required Modal -->
+    <div id="verificationModal" class="modal" style="z-index: 9000; background: var(--bg-dark);">
+        <div class="modal-content" style="text-align: center; border-color: var(--danger);">
+            <i class="fas fa-envelope-open-text" style="font-size: 50px; color: var(--danger); margin-bottom: 20px;"></i>
+            <h2 style="color: white;">ইমেইল ভেরিফিকেশন</h2>
+            <p style="color: #ccc; margin-bottom: 20px;">
+                আপনার ইমেইলটি ভেরিফাই করা হয়নি। আপনার ইমেইল ইনবক্স (বা স্প্যাম ফোল্ডার) চেক করুন এবং লিংকে ক্লিক করুন।
+            </p>
+            <button class="gold-btn" onclick="resendVerification()">ভেরিফিকেশন লিংক আবার পাঠান</button>
+            <button class="gold-btn" style="background: #334155; margin-top: 10px;" onclick="logout()">লগআউট</button>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="container" id="appContainer">
+        
+        <!-- Header -->
+        <div class="user-header">
+            <div class="user-info">
+                <h2 id="userNameDisplay">User Name</h2>
+                <p>ID: <span id="userIdDisplay">...</span></p>
+            </div>
+            <div class="header-actions">
+                <div class="balance-badge">VIP <span id="vipLevelDisplay">0</span></div>
+                <div class="icon-btn" onclick="openModal('notificationModal')">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge" id="notifBadge">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOME TAB -->
+        <div id="homeTab" class="tab-content active">
+            <div class="main-balance-card">
+                <div class="balance-title">মোট ব্যালেন্স (Plan Buy)</div>
+                <div class="balance-amount">৳ <span id="mainBalance">0.00</span></div>
+                <div class="income-wallet-display">
+                     উত্তোলনযোগ্য আয়: ৳ <span id="incomeWallet">0.00</span>
+                </div>
+            </div>
+
+            <div class="marquee-container">
+                <i class="fas fa-bullhorn marquee-icon"></i>
+                <marquee direction="left" id="payoutMarquee">
+                    Trust Invest এ আপনাকে স্বাগতম...
+                </marquee>
+            </div>
+
+            <div class="action-grid">
+                <div class="action-item" onclick="openModal('depositModal')">
+                    <i class="fas fa-wallet"></i>
+                    <div>ডিপোজিট</div>
+                </div>
+                <div class="action-item" onclick="openModal('withdrawModal')">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <div>উত্তোলন</div>
+                </div>
+                <div class="action-item" onclick="openLottery()">
+                    <i class="fas fa-ticket-alt"></i>
+                    <div>লটারি</div>
+                </div>
+                <div class="action-item" onclick="openModal('supportModal')">
+                    <i class="fas fa-headset"></i>
+                    <div>সাপোর্ট</div>
+                </div>
+            </div>
+            
+            <button class="gold-btn" style="background: #334155; margin-bottom: 20px; color: white;" onclick="openModal('leaderboardModal')">
+                <i class="fas fa-trophy"></i> টপ লিডারবোর্ড
+            </button>
+
+            <!-- Promo Code Removed -->
+
+            <h3 style="margin-bottom: 15px; color: var(--primary-gold); border-left: 4px solid var(--primary-gold); padding-left: 10px;">জনপ্রিয় প্ল্যান সমূহ</h3>
+            
+            <div id="planListContainer">
+                <p style="text-align:center; color: #aaa;">প্ল্যান লোডিং হচ্ছে...</p>
+            </div>
+        </div>
+
+        <!-- TASK TAB -->
+        <div id="taskTab" class="tab-content">
+            <!-- Daily Task (Claim) Removed -->
+
+            <!-- Scratch Card Section -->
+            <h3 style="margin: 15px 0; border-left: 4px solid var(--primary-gold); padding-left: 10px; color:white;">ডেইলি স্ক্র্যাচ কার্ড</h3>
+            <div class="scratch-wrapper">
+                <div class="scratch-reward">
+                    <h2 style="color: #d4af37;">WIN</h2>
+                    <h1 id="scratchAmount">৳0</h1>
+                </div>
+                <canvas id="scratchCanvas" width="300" height="150"></canvas>
+            </div>
+            <p style="text-align: center; font-size: 12px; color: #aaa; margin-bottom: 20px;">পুরো কার্ডটি ঘষে বোনাস নিন (দিনে ১ বার)</p>
+
+
+            <!-- Spin Wheel -->
+            <button class="spin-btn" onclick="openSpinModal()">
+                <span><i class="fas fa-dharmachakra"></i> লাকি স্পিন</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            
+            <!-- Captcha Entry -->
+            <button class="captcha-btn" onclick="openCaptcha()">
+                <span><i class="fas fa-keyboard"></i> ক্যাপচা এন্ট্রি</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Video Zone (New Feature) -->
+            <button class="video-btn" onclick="openVideoZone()">
+                <span><i class="fab fa-youtube"></i> ভিডিও জোন</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <p style="text-align: center; font-size: 12px; color: #aaa; margin-top: 5px;">ভিডিও দেখে টাকা আয় করুন</p>
+
+            <!-- Prediction (New Feature) -->
+            <button class="prediction-btn" onclick="openPredictions()">
+                <span><i class="fas fa-chart-pie"></i> প্রেডিকশন</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <p style="text-align: center; font-size: 12px; color: #aaa; margin-top: 5px;">ভোট দিয়ে টাকা জিতুন</p>
+
+            <!-- Micro Jobs Section -->
+            <button class="job-btn" onclick="openJobSystem()">
+                <span><i class="fas fa-briefcase"></i> মাইক্রো জব</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Quiz Section -->
+            <button class="quiz-btn" onclick="startQuiz()">
+                <span><i class="fas fa-brain"></i> প্লে কুইজ</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <p style="text-align: center; font-size: 12px; color: #aaa; margin-top: 10px;">কুইজ খেলে পয়েন্ট জিতুন</p>
+
+            <!-- Popunder Script Injection Area -->
+            <div id="adContainer"></div>
+        </div>
+
+        <!-- TEAM TAB -->
+        <div id="teamTab" class="tab-content">
+            <div class="main-balance-card" style="padding: 15px;">
+                <div class="balance-title">রেফারেল ইনকাম</div>
+                <div class="balance-amount" style="font-size: 24px;">৳ <span id="refIncome">0</span></div>
+                
+                <!-- Referral Code Section -->
+                <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 13px; color: #ccc;">আপনার কোড: <b id="displayRefCode" style="color:white; letter-spacing: 1px;">...</b></span>
+                    <button class="copy-btn" onclick="copyRefCode()"><i class="fas fa-copy"></i> কপি</button>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p>লেভেল ১ কমিশন: ১০%</p>
+                <p>সাইন আপ বোনাস: <span id="refBonusDisplay">20</span> টাকা</p>
+            </div>
+
+            <!-- Upline Display -->
+            <div id="uplineContainer" style="display:none;">
+                <h4 style="color: var(--text-gray); margin-bottom: 10px;">আমার আপলাইন</h4>
+                <div class="upline-card">
+                    <i class="fas fa-user-tie upline-icon"></i>
+                    <div>
+                        <h4 id="uplineName" style="color:white; font-size:16px;">Loading...</h4>
+                        <p style="font-size:12px; color:#10b981;">আপনার লিডার</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bindRefSection" style="background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: none;">
+                <h4 style="color: var(--primary-gold); margin-bottom: 10px;">রেফার কোড ব্যবহার করুন</h4>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="bindRefInput" placeholder="বন্ধুর রেফার কোড" style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #334155; background: #0f172a; color: white;">
+                    <button class="gold-btn" style="width: auto; margin: 0; padding: 10px;" onclick="bindReferrer()">Join</button>
+                </div>
+            </div>
+
+            <h3 style="margin: 15px 0;">আমার টিম (৫ লেভেল)</h3>
+            
+            <!-- Recursive Team Tree -->
+            <div id="teamTreeRoot" style="min-height: 100px;">
+                <p style="text-align:center; color:#666; padding: 20px;">টিম লোডিং...</p>
+            </div>
+        </div>
+
+        <!-- PROFILE TAB -->
+        <div id="profileTab" class="tab-content">
+            <div class="vip-card" style="padding: 20px; text-align: center;">
+                <i class="fas fa-user-circle" style="font-size: 60px; color: var(--primary-gold); margin-bottom: 10px;"></i>
+                <h2 id="profileName">Loading...</h2>
+                <p id="profilePhone" style="color: var(--text-gray);">...</p>
+                <p style="font-size: 12px; color: #aaa; margin-top:5px;">Refer Code: <span id="myRefCode" style="color: white; font-weight: bold;">...</span></p>
+            </div>
+
+            <div style="background: var(--card-bg); border-radius: 10px; overflow: hidden; margin-bottom: 20px;">
+                <div class="action-item" style="display: flex; align-items: center; text-align: left; padding: 15px; border-bottom: 1px solid #334155;" onclick="openJobSystem('history')">
+                     <i class="fas fa-briefcase" style="margin-right: 15px; font-size: 20px;"></i> কাজের হিস্ট্রি (Job)
+                </div>
+                 <div class="action-item" style="display: flex; align-items: center; text-align: left; padding: 15px; border-bottom: 1px solid #334155;" onclick="openJobSystem('posted')">
+                     <i class="fas fa-clipboard-list" style="margin-right: 15px; font-size: 20px;"></i> আমার জব পোস্ট (My Jobs)
+                </div>
+            </div>
+
+             <!-- Admin / Demo Data Tools Removed -->
+
+            <div style="background: var(--card-bg); border-radius: 10px; overflow: hidden;">
+                <div class="action-item" style="display: flex; align-items: center; text-align: left; padding: 15px; border-bottom: 1px solid #334155;" onclick="openHistoryPage()">
+                    <i class="fas fa-history" style="margin-right: 15px; font-size: 20px;"></i> লেনদেনের ইতিহাস
+                </div>
+                <div class="action-item" style="display: flex; align-items: center; text-align: left; padding: 15px; border-bottom: 1px solid #334155;" onclick="openModal('editProfileModal')">
+                    <i class="fas fa-edit" style="margin-right: 15px; font-size: 20px;"></i> প্রোফাইল এডিট
+                </div>
+                <div class="action-item" style="display: flex; align-items: center; text-align: left; padding: 15px; color: var(--danger);" onclick="logout()">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 15px; font-size: 20px;"></i> লগআউট
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HISTORY PAGE (Overlay) -->
+    <div id="historyPage" class="full-page-overlay">
+        <div class="page-header">
+            <i class="fas fa-arrow-left back-btn" onclick="closeHistoryPage()"></i>
+            <h2>লেনদেনের ইতিহাস</h2>
+        </div>
+        
+        <div class="history-tabs">
+            <div class="h-tab active" onclick="switchHistoryTab('depHistory', this)">ডিপোজিট</div>
+            <div class="h-tab" onclick="switchHistoryTab('withHistory', this)">উত্তোলন</div>
+        </div>
+
+        <div id="depHistory" class="history-content-box">
+            <p style="text-align:center; padding:20px;">লোডিং...</p>
+        </div>
+        <div id="withHistory" class="history-content-box" style="display:none;">
+            <p style="text-align:center; padding:20px;">লোডিং...</p>
+        </div>
+    </div>
+
+    <!-- QUIZ OVERLAY PAGE -->
+    <div id="quizOverlay">
+        <div class="page-header">
+            <i class="fas fa-arrow-left back-btn" onclick="closeQuiz()"></i>
+            <h2>কুইজ খেলুন</h2>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="color: var(--primary-gold);">স্কোর: <span id="quizScore">0</span></div>
+            <div style="font-size: 12px; color: #aaa;">Correct Streak: <span id="streakCount">0</span></div>
+        </div>
+
+        <div id="quizContainer">
+            <!-- Questions load here -->
+            <p style="text-align: center; margin-top: 50px;">প্রশ্ন লোডিং...</p>
+        </div>
+    </div>
+
+    <!-- VIDEO ZONE OVERLAY -->
+    <div id="videoOverlay">
+        <div class="page-header">
+            <i class="fas fa-arrow-left back-btn" onclick="document.getElementById('videoOverlay').style.display='none'"></i>
+            <h2>ভিডিও জোন</h2>
+        </div>
+        <div class="info-box">
+            পুরো ভিডিওটি দেখুন এবং সময় শেষ হলে অটোমেটিক রিওয়ার্ড ব্যালেন্সে যোগ হবে।
+        </div>
+        <div id="videoListContainer">
+            <p style="text-align:center; padding-top:20px;">লোডিং...</p>
+        </div>
+    </div>
+
+    <!-- VIDEO PLAYER MODAL -->
+    <div id="videoPlayerModal" class="modal" style="z-index: 6000;">
+        <div class="modal-content" style="width: 100%; height: 100%; max-width: none; border-radius: 0; display: flex; flex-direction: column; justify-content: center; background: black;">
+             <div style="position: absolute; top: 20px; right: 20px; color: white; font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; z-index: 100;">
+                সময় বাকি: <span id="videoTimerDisplay" style="color: var(--primary-gold);">...</span>s
+            </div>
+            <div id="playerWrapper" style="width: 100%; aspect-ratio: 16/9;">
+                <!-- Iframe inserted here -->
+            </div>
+            <p style="color: #aaa; text-align: center; margin-top: 20px;">ভিডিও দেখা শেষ না হওয়া পর্যন্ত বের হবেন না।</p>
+            <button id="closeVideoBtn" class="gold-btn" style="margin-top: 20px; display: none;" onclick="closeVideoPlayer()">রিওয়ার্ড নেওয়া হয়েছে, ফিরে যান</button>
+        </div>
+    </div>
+
+    <!-- PREDICTION OVERLAY -->
+    <div id="predictionOverlay">
+        <div class="page-header">
+            <i class="fas fa-arrow-left back-btn" onclick="document.getElementById('predictionOverlay').style.display='none'"></i>
+            <h2>প্রেডিকশন</h2>
+        </div>
+        <div class="info-box">
+            সঠিক উত্তর প্রেডিকশন করুন এবং এডমিন ফলাফল ঘোষণা করলে বিজয়ী হলে প্রাইজ মানি ভাগ করে পাবেন।
+        </div>
+        <div id="predictionListContainer">
+            <p style="text-align:center; padding-top:20px;">লোডিং...</p>
+        </div>
+    </div>
+
+    <!-- JOB OVERLAY PAGE -->
+    <div id="jobOverlay">
+        <div class="page-header">
+            <i class="fas fa-arrow-left back-btn" onclick="closeJobOverlay()"></i>
+            <h2>মাইক্রো জব</h2>
+        </div>
+
+        <div class="job-nav">
+            <div class="job-nav-item active" onclick="switchJobTab('allJobs', this)">সকল জব</div>
+            <div class="job-nav-item" onclick="switchJobTab('postedJobs', this)">আমার পোস্ট</div>
+            <div class="job-nav-item" onclick="switchJobTab('workHistory', this)">কাজের হিস্ট্রি</div>
+        </div>
+
+        <!-- Job Poster Status Check -->
+        <div id="jobPosterControls" style="margin-bottom: 20px; text-align: center;">
+            <div id="posterReqSection">
+                <p style="font-size:12px; color:#aaa; margin-bottom:10px;">জব পোস্ট করতে চাইলে রিকোয়েস্ট করুন (ব্যালেন্স ৩০০+ থাকতে হবে)</p>
+                <button id="reqPosterBtn" class="gold-btn" style="background: #334155; color: white;" onclick="requestPosterStatus()">জব পোস্টার হতে রিকোয়েস্ট করুন</button>
+            </div>
+            <button id="createJobBtn" class="gold-btn" style="display: none;" onclick="openModal('createJobModal')"><i class="fas fa-plus"></i> নতুন জব পোস্ট করুন</button>
+        </div>
+
+        <!-- Tab: All Jobs -->
+        <div id="allJobsContainer">
+            <h3 style="margin-bottom: 15px; border-left: 3px solid var(--primary-gold); padding-left: 10px;">সকল জব</h3>
+            <div id="jobListContainer">
+                <p style="text-align: center; color: #aaa;">লোড হচ্ছে...</p>
+            </div>
+        </div>
+
+        <!-- Tab: Posted Jobs (For Poster) -->
+        <div id="postedJobsContainer" style="display:none;">
+            <h3 style="margin-bottom: 15px; border-left: 3px solid var(--primary-gold); padding-left: 10px;">আমার পোস্ট করা জব</h3>
+            <div id="myPostedJobsList">
+                <p style="text-align: center; color: #aaa;">আপনি কোনো জব পোস্ট করেননি।</p>
+            </div>
+        </div>
+
+        <!-- Tab: Work History (For Worker) -->
+        <div id="workHistoryContainer" style="display:none;">
+            <h3 style="margin-bottom: 15px; border-left: 3px solid var(--primary-gold); padding-left: 10px;">আমার কাজের তালিকা</h3>
+            <div id="myWorkList">
+                <p style="text-align: center; color: #aaa;">আপনি কোনো কাজ করেননি।</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AD TIMER OVERLAY -->
+    <div id="adTimerOverlay">
+        <h2 style="color: white; margin-bottom: 20px;">বিজ্ঞাপন দেখুন</h2>
+        <p style="color: #aaa; margin-bottom: 30px; font-size: 14px;">নিচের বাটনে ক্লিক করে ৩০ সেকেন্ড অপেক্ষা করুন</p>
+        
+        <div class="timer-circle" id="timerDisplay">30</div>
+        
+        <button id="watchAdBtn" class="gold-btn" style="width: auto; padding: 10px 40px;">Watch Ad Now</button>
+        <button id="closeAdBtn" class="gold-btn" style="width: auto; padding: 10px 40px; background: #334155; color: #94a3b8; display: none;" onclick="closeAdOverlay()">Back to App</button>
+    </div>
+
+    <!-- Footer Nav -->
+    <div class="footer-nav" id="footerNav" style="display: none;">
+        <div class="nav-item active" onclick="switchTab('homeTab', this)"><i class="fas fa-home"></i>হোম</div>
+        <div class="nav-item" onclick="switchTab('taskTab', this)"><i class="fas fa-check-circle"></i>টাস্ক</div>
+        <div class="nav-item" onclick="switchTab('teamTab', this)"><i class="fas fa-users"></i>টিম</div>
+        <div class="nav-item" onclick="switchTab('profileTab', this)"><i class="fas fa-user"></i>প্রোফাইল</div>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Captcha Modal -->
+    <div id="captchaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('captchaModal')">&times;</span>
+            <h2>ক্যাপচা এন্ট্রি</h2>
+            <div class="captcha-box" id="captchaDisplay">...</div>
+            <div class="input-group">
+                <input type="text" id="captchaInput" placeholder="উপরের কোডটি লিখুন" style="text-align:center; letter-spacing: 2px;">
+            </div>
+            <button id="submitCaptchaBtn" class="gold-btn" onclick="submitCaptcha()">সাবমিট করুন</button>
+            <div id="captchaTimerText" style="margin-top:15px; color:#f59e0b; display:none;">পরবর্তী ক্যাপচা: <span id="capCount">10</span>s</div>
+        </div>
+    </div>
+
+    <!-- Lottery Modal -->
+    <div id="lotteryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('lotteryModal')">&times;</span>
+            <h2>লটারি</h2>
+            <div id="lotteryInfoSection" class="info-box">
+                লোডিং...
+            </div>
+            
+            <div id="buyTicketSection" style="text-align:center; margin-bottom:20px; display:none;">
+                <h4 style="color:white; margin-bottom:10px;">টিকেট কিনুন</h4>
+                <p style="font-size:12px; color:#aaa; margin-bottom:10px;">মূল্য মেইন ব্যালেন্স থেকে কাটা হবে।</p>
+                <button class="gold-btn" onclick="buyTicket()">Buy Ticket Now</button>
+            </div>
+
+            <h4 style="color:var(--primary-gold); margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:5px;">আমার টিকেট সমূহ</h4>
+            <div id="myTicketsList" style="max-height: 200px; overflow-y: auto;">
+                <p style="text-align:center; color:#666;">কোন টিকেট কেনা হয়নি</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('depositModal')">&times;</span>
+            <h2>টাকা ডিপোজিট</h2>
+            <div class="info-box">
+                নিচের নাম্বারে <b>Send Money</b> করুন। এরপর TrxID টি সাবমিট করুন। ১-৩০ মিনিটের মধ্যে ব্যালেন্স এড হবে।
+            </div>
+            <div id="depositPackages" class="chip-container"></div>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <p style="color: #ff00aa; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                    বিকাশ: <span id="bkashNumberDisplay">...</span>
+                    <button class="copy-btn" onclick="copyToClipboard('bkashNumberDisplay')"><i class="fas fa-copy"></i></button>
+                </p>
+                <p style="color: #f6722d; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-top:5px;">
+                    নগদ: <span id="nagadNumberDisplay">...</span>
+                    <button class="copy-btn" onclick="copyToClipboard('nagadNumberDisplay')"><i class="fas fa-copy"></i></button>
+                </p>
+                <p style="font-size: 11px; color: #aaa; margin-top:5px;">মিনিমাম ডিপোজিট: <span id="minDepDisplay">...</span> টাকা</p>
+            </div>
+            <form id="depositForm">
+                <div class="input-group">
+                    <select id="depMethod" style="width: 100%; padding: 10px; background: #0f172a; color: white; border-radius: 5px;">
+                        <option value="bkash">Bkash</option>
+                        <option value="nagad">Nagad</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="depAmount" placeholder="টাকার পরিমাণ (Max 5000)" max="5000" min="50" oninput="if(this.value < 0) this.value = 0;" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="depTrx" placeholder="Transaction ID (TrxID)" required>
+                </div>
+                <!-- Image Upload UI (Visual only) -->
+                <div class="file-upload-wrapper" onclick="document.getElementById('depScreenshot').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: var(--primary-gold);"></i>
+                    <p style="font-size: 12px; color: #ccc; margin-top: 5px;">স্ক্রিনশট আপলোড করুন (Optional)</p>
+                    <p id="depFileName" style="font-size: 10px; color: var(--success); display: none;"></p>
+                    <input type="file" id="depScreenshot" accept="image/*" onchange="handleFileSelect('depScreenshot', 'depFileName')">
+                </div>
+                <button type="submit" class="gold-btn">রিকোয়েস্ট পাঠান</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('withdrawModal')">&times;</span>
+            <h2>টাকা উত্তোলন</h2>
+            <div class="info-box" style="margin-bottom: 10px;">
+                <b>নোট:</b> রেফারেল বোনাস তুলতে হলে আপনাকে অন্তত একবার ডিপোজিট করে প্ল্যান একটিভ করতে হবে।<br>
+                <b>উইথড্র চার্জ: <span id="withdrawFeePercent">0</span>%</b>
+            </div>
+            <p style="text-align: center; margin-bottom: 5px;">ইনকাম ব্যালেন্স: ৳<span id="modalIncomeBal">0</span></p>
+            <form id="withdrawForm">
+                <div class="input-group">
+                    <select id="withMethod" style="width: 100%; padding: 10px; background: #0f172a; color: white; border-radius: 5px;">
+                        <option value="bkash">Bkash</option>
+                        <option value="nagad">Nagad</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="withAmount" placeholder="টাকার পরিমাণ (Max 5000)" max="5000" min="10" oninput="if(this.value < 0) this.value = 0; calculateWithdrawFee()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+                </div>
+                <p style="font-size: 12px; color: #10b981; margin-bottom: 10px; text-align: right;">
+                    পাবেন: <span id="receiveAmount">0</span> টাকা
+                </p>
+                <div class="input-group">
+                    <input type="text" id="withNumber" placeholder="আপনার মোবাইল নাম্বার (01...)" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="withPass" placeholder="পাসওয়ার্ড" required>
+                </div>
+                <button type="submit" class="gold-btn">উত্তোলন করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Spin Wheel Modal -->
+    <div id="spinModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-btn" onclick="closeModal('spinModal')">&times;</span>
+            <h2 style="color: #a855f7;">লাকি স্পিন</h2>
+            <div class="wheel-container" id="wheel">
+                <div class="spin-center">SPIN</div>
+                <div class="wheel-arrow"></div>
+            </div>
+            <p style="font-size: 12px; color: #ccc; margin-bottom: 15px;">প্রতিদিন ১ বার স্পিন করতে পারবেন।</p>
+            <button class="gold-btn" style="background: linear-gradient(45deg, #8E2DE2, #4A00E0); color: white;" onclick="spinWheel()">ঘুরান</button>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('notificationModal')">&times;</span>
+            <h2>নোটিফিকেশন</h2>
+            <div id="notifList" style="max-height: 300px; overflow-y: auto;">
+                <p style="text-align: center; color: #aaa;">কোন নোটিফিকেশন নেই</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboardModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('leaderboardModal')">&times;</span>
+            <h2>লিডারবোর্ড</h2>
+            <div class="info-box">সর্বোচ্চ ইনকামকারী ১০ জন ইউজার</div>
+            <div id="leaderboardList" style="max-height: 300px; overflow-y: auto;">
+                <!-- List will populate here -->
+                <p style="text-align: center; color: #aaa;">লোড হচ্ছে...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Job Modal -->
+    <div id="createJobModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('createJobModal')">&times;</span>
+            <h2>নতুন জব পোস্ট</h2>
+            <div class="info-box">
+                পোস্ট করার সাথে সাথে মোট খরচ ব্যালেন্স থেকে কেটে নেওয়া হবে (Escrow)।
+            </div>
+            <form id="createJobForm">
+                <div class="input-group">
+                    <input type="text" id="jobTitle" placeholder="জবের শিরোনাম (Title)" required>
+                </div>
+                <div class="input-group">
+                    <textarea id="jobDesc" rows="3" placeholder="কাজের বিস্তারিত বিবরণ (কি করতে হবে?)" required></textarea>
+                </div>
+                <div class="input-group">
+                    <input type="url" id="jobLink" placeholder="কাজের লিংক (Work Link)" required>
+                </div>
+                <div class="input-group">
+                    <input type="url" id="jobProofLink" placeholder="প্রুভ লিংক (উদাহরণ/ভিডিও) - ঐচ্ছিক">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="jobContact" placeholder="যোগাযোগ (Telegram/Phone) - ঐচ্ছিক">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div class="input-group">
+                        <input type="number" id="jobReward" placeholder="প্রতি পেমেন্ট (৳)" min="0" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="jobSlots" placeholder="মোট কাজ (Slot)" min="1" required>
+                    </div>
+                </div>
+                <p id="totalJobCost" style="text-align:right; font-size:12px; color:#aaa; margin-bottom:10px;">মোট খরচ: 0 টাকা</p>
+                <button type="submit" class="gold-btn">পোস্ট করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Submit Job Proof Modal -->
+    <div id="submitJobModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('submitJobModal')">&times;</span>
+            <h2 id="submitJobTitle">জব সাবমিট</h2>
+            <p id="submitJobLinkDisplay" style="text-align: center; margin-bottom: 5px; color: #38ef7d; word-break: break-all;"></p>
+            <p id="submitJobProofLinkDisplay" style="text-align: center; margin-bottom: 10px; font-size: 12px; display: none;"></p>
+            
+            <div id="jobDetailsDisplay" style="font-size:12px; color:#ccc; background:#0f172a; padding:10px; border-radius:5px; margin-bottom:15px; max-height:100px; overflow-y:auto;"></div>
+            
+            <div class="info-box">
+                 লিংকে গিয়ে কাজ শেষ করে প্রমাণ জমা দিন। পোস্টার এপ্রুভ করলে টাকা পাবেন।
+            </div>
+            <form id="jobProofForm">
+                <input type="hidden" id="submitJobId">
+                <input type="hidden" id="submitJobPosterId">
+                <div class="input-group">
+                    <textarea id="jobProofText" rows="3" placeholder="কাজের প্রমাণ লিখুন (Proof)" required></textarea>
+                </div>
+                <!-- Job Proof Screenshot UI -->
+                <div class="file-upload-wrapper" onclick="document.getElementById('jobProofImage').click()">
+                    <i class="fas fa-image" style="font-size: 24px; color: var(--primary-gold);"></i>
+                    <p style="font-size: 12px; color: #ccc; margin-top: 5px;">প্রুভ স্ক্রিনশট দিন (Optional)</p>
+                    <p id="jobFileName" style="font-size: 10px; color: var(--success); display: none;"></p>
+                    <input type="file" id="jobProofImage" accept="image/*" onchange="handleFileSelect('jobProofImage', 'jobFileName')">
+                </div>
+                <button type="submit" class="gold-btn">জমা দিন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Submissions Modal (For Poster) -->
+    <div id="viewSubmissionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('viewSubmissionsModal')">&times;</span>
+            <h2>কাজের প্রমাণসমূহ</h2>
+            <div id="submissionListContainer" style="max-height: 400px; overflow-y: auto;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('editProfileModal')">&times;</span>
+            <h2>প্রোফাইল এডিট</h2>
+            <div class="input-group">
+                <label>নাম পরিবর্তন</label>
+                <input type="text" id="editNameInput" placeholder="নাম পরিবর্তন করুন">
+            </div>
+            <hr style="border-color: #334155; margin: 20px 0;">
+            <h4 style="color:var(--text-gray); margin-bottom:15px; text-align:center;">পাসওয়ার্ড পরিবর্তন</h4>
+            <div class="input-group">
+                <label>পুরাতন পাসওয়ার্ড</label>
+                <input type="password" id="editOldPass" placeholder="বর্তমান পাসওয়ার্ড দিন">
+                <i class="fas fa-eye password-toggle" onclick="togglePass('editOldPass', this)"></i>
+            </div>
+            <div class="input-group">
+                <label>নতুন পাসওয়ার্ড</label>
+                <input type="password" id="editNewPass" placeholder="নতুন পাসওয়ার্ড দিন">
+                <i class="fas fa-eye password-toggle" onclick="togglePass('editNewPass', this)"></i>
+            </div>
+            <div class="input-group">
+                <label>কনফার্ম নতুন পাসওয়ার্ড</label>
+                <input type="password" id="editConfirmPass" placeholder="নতুন পাসওয়ার্ড আবার দিন">
+                <i class="fas fa-eye password-toggle" onclick="togglePass('editConfirmPass', this)"></i>
+            </div>
+            <button class="gold-btn" onclick="updateProfile()">আপডেট করুন</button>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('supportModal')">&times;</span>
+            <h2>সাপোর্ট</h2>
+            <p style="text-align: center; margin-bottom: 15px;">যেকোনো প্রয়োজনে আমাদের টেলিগ্রামে যোগাযোগ করুন।</p>
+            <button class="gold-btn" onclick="openAdminLink('supportLink')"><i class="fab fa-telegram-plane"></i> টেলিগ্রাম মেসেজ</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAs-ZtYn3D3JsTsDxiJwA9lGyNnmCev6Vk", 
+            authDomain: "trust-invest-e5f8d.firebaseapp.com",
+            databaseURL: "https://trust-invest-e5f8d-default-rtdb.firebaseio.com",
+            projectId: "trust-invest-e5f8d",
+            storageBucket: "trust-invest-e5f8d.firebasestorage.app",
+            messagingSenderId: "781531723322",
+            appId: "1:781531723322:android:411c5d18098a430eb76703"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        // --- GLOBAL VARIABLES ---
+        let currentUser = null;
+        let userData = {};
+        let appSettings = {
+            bkashNumber: "01700000000",
+            nagadNumber: "01800000000",
+            minDeposit: 500,
+            minWithdraw: 200,
+            signupBonus: 50,
+            referralBonus: 20,
+            withdrawCharge: 5,
+            minBalanceForPosterReq: 300,
+            posterApprovalFee: 50,
+            marqueeText: "Welcome to Trust Invest",
+            privacyLink: "https://google.com",
+            forgotPassLink: "https://t.me/...",
+            channelLink: "https://t.me/...",
+            supportLink: "https://t.me/...",
+            adLink: "https://google.com",
+            depositPackages: [],
+            captchaReward: 0.10,
+            scratchRewardMin: 1,
+            scratchRewardMax: 5,
+            appVersion: "1.0.0", // New for Update Check
+            maintenance: false, // New for Maintenance Mode
+            appDownloadLink: "https://google.com" // Update Link
+        };
+        let plans = [];
+        let quizzes = [];
+        let loadedJobs = {};
+
+        // Helper: SweetAlert Toast (NEW FEATURE)
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: '#1e293b',
+            color: '#fff'
+        });
+
+        function showToast(icon, title) { Toast.fire({ icon: icon, title: title }); }
+        function showAlert(title, icon = 'info', text = '') {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                background: '#1e293b',
+                color: '#fff',
+                confirmButtonColor: '#d4af37'
+            });
+        }
+
+        // --- INIT & DATA LOADING ---
+        function loadGlobalData() {
+            // Load Settings
+            db.ref('settings').on('value', (snapshot) => {
+                if(snapshot.exists()) {
+                    appSettings = { ...appSettings, ...snapshot.val() };
+                    updateDOMWithSettings();
+                    
+                    // Maintenance Mode Check
+                    if(appSettings.maintenance) {
+                        document.body.innerHTML = '<div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; color:white; text-align:center; background:#0f172a;"><i class="fas fa-tools" style="font-size:50px; color:#d4af37; margin-bottom:20px;"></i><h1>🚧 রক্ষণাবেক্ষণ চলছে 🚧</h1><p>সার্ভার আপডেটের কাজ চলছে। দয়া করে কিছুক্ষণ পর চেষ্টা করুন।</p></div>';
+                        return;
+                    }
+
+                    // App Version Check
+                    const currentVersion = "1.0.0"; // Change this when releasing update
+                    if(appSettings.appVersion && appSettings.appVersion !== currentVersion) {
+                        Swal.fire({
+                            title: "নতুন আপডেট!",
+                            text: "অ্যাপের নতুন ভার্সন এসেছে। দয়া করে আপডেট করুন।",
+                            icon: "warning",
+                            allowOutsideClick: false,
+                            confirmButtonText: "আপডেট করুন"
+                        }).then(() => {
+                            window.location.href = appSettings.appDownloadLink;
+                        });
+                    }
+                }
+            });
+            // Load Plans
+            db.ref('plans').on('value', (snapshot) => {
+                plans = [];
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        plans.push({ id: child.key, ...child.val() });
+                    });
+                    plans.sort((a,b) => a.price - b.price);
+                    if(currentUser) renderPlans();
+                } else {
+                    document.getElementById('planListContainer').innerHTML = "<p style='text-align:center; padding:20px;'>বর্তমানে কোনো প্ল্যান নেই</p>";
+                }
+            });
+            // Load Quizzes
+            db.ref('quizzes').on('value', (snapshot) => {
+                quizzes = [];
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        let qVal = child.val();
+                        quizzes.push(qVal);
+                    });
+                }
+            });
+            // Load Leaderboard
+            loadLeaderboard();
+        }
+        loadGlobalData();
+
+        function updateDOMWithSettings() {
+            document.getElementById('payoutMarquee').innerText = appSettings.marqueeText;
+            document.getElementById('bkashNumberDisplay').innerText = appSettings.bkashNumber;
+            document.getElementById('nagadNumberDisplay').innerText = appSettings.nagadNumber;
+            document.getElementById('minDepDisplay').innerText = appSettings.minDeposit;
+            document.getElementById('refBonusDisplay').innerText = appSettings.referralBonus;
+            document.getElementById('withdrawFeePercent').innerText = appSettings.withdrawCharge;
+            renderDepositPackages();
+        }
+
+        function renderDepositPackages() {
+            const container = document.getElementById('depositPackages');
+            container.innerHTML = '';
+            let packages = appSettings.depositPackages || [
+                {amount: 500, bonus: 50}, {amount: 1000, bonus: 100}, {amount: 2000, bonus: 250}
+            ];
+            packages.forEach(pkg => {
+                const chip = document.createElement('div');
+                chip.className = 'dep-chip';
+                chip.innerHTML = `<span>৳${pkg.amount}</span> +৳${pkg.bonus}`;
+                chip.onclick = () => {
+                    document.getElementById('depAmount').value = pkg.amount;
+                };
+                container.appendChild(chip);
+            });
+        }
+
+        // --- AUTH LOGIC (Updated with Email Verification & Real-time Ban) ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // CHECK IF EMAIL VERIFIED
+                if (!user.emailVerified) {
+                    currentUser = user;
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('verificationModal').style.display = 'flex';
+                    return;
+                }
+
+                currentUser = user;
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('verificationModal').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                document.getElementById('footerNav').style.display = 'flex';
+                
+                // Load User Data & Setup Real-time Ban Listener
+                loadUserData();
+                loadNotifications();
+
+                // Real-time Ban Check Hook
+                db.ref('users/' + user.uid + '/isBanned').on('value', snap => {
+                    if(snap.exists() && snap.val() === true) {
+                        auth.signOut();
+                        Swal.fire({
+                            title: 'অ্যাক্সেস নিষিদ্ধ',
+                            text: 'আপনার একাউন্টটি ব্যান করা হয়েছে। সাপোর্টে যোগাযোগ করুন।',
+                            icon: 'error',
+                            background: '#1e293b',
+                            color: '#fff',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK'
+                        }).then(() => location.reload());
+                    }
+                });
+
+            } else {
+                document.getElementById('authOverlay').style.display = 'flex';
+                document.getElementById('appContainer').style.display = 'none';
+                document.getElementById('footerNav').style.display = 'none';
+                document.getElementById('verificationModal').style.display = 'none';
+            }
+        });
+
+        function loadUserData() {
+            db.ref('users/' + currentUser.uid).on('value', snapshot => {
+                if (snapshot.exists()) {
+                    userData = snapshot.val();
+
+                    if(userData.incomeWallet === undefined) userData.incomeWallet = 0;
+                    if(userData.balance === undefined) userData.balance = 0;
+                    updateUI();
+                    renderPlans();
+                    loadTeamTree(); 
+                    initScratchCard();
+                }
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('userNameDisplay').innerText = userData.name;
+            document.getElementById('userIdDisplay').innerText = currentUser.uid.substring(0, 8);
+            document.getElementById('vipLevelDisplay').innerText = userData.vipLevel || 0;
+            document.getElementById('mainBalance').innerText = (userData.balance || 0).toFixed(2);
+            document.getElementById('incomeWallet').innerText = (userData.incomeWallet || 0).toFixed(2);
+            document.getElementById('modalIncomeBal').innerText = (userData.incomeWallet || 0).toFixed(2);
+            document.getElementById('profileName').innerText = userData.name;
+            document.getElementById('profilePhone').innerText = userData.email;
+            
+            document.getElementById('myRefCode').innerText = userData.refCode || "No Code";
+            document.getElementById('displayRefCode').innerText = userData.refCode || "No Code";
+            document.getElementById('editNameInput').value = userData.name;
+            
+            // Handle Upline Display
+            const bindSec = document.getElementById('bindRefSection');
+            const uplineContainer = document.getElementById('uplineContainer');
+            if (userData.upline) {
+                bindSec.style.display = 'none';
+                uplineContainer.style.display = 'block';
+                // Fetch upline name
+                db.ref('users').orderByChild('refCode').equalTo(userData.upline).once('value', s => {
+                    if (s.exists()) {
+                        s.forEach(c => document.getElementById('uplineName').innerText = c.val().name);
+                    }
+                });
+            } else {
+                bindSec.style.display = 'block';
+                uplineContainer.style.display = 'none';
+            }
+
+            // Check Poster Status for UI
+            checkJobPosterStatus();
+
+            // Daily Claim UI update removed as requested
+        }
+
+        // --- AUTH ACTIONS (UPDATED WITH LOADING) ---
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // UI Loading State
+            const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+            const originalText = loginBtn.innerText;
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> যাচাই করা হচ্ছে...';
+
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    // Success is handled by onAuthStateChanged
+                    loginBtn.innerText = "সফল হয়েছে!";
+                })
+                .catch(err => {
+                    loginBtn.disabled = false;
+                    loginBtn.innerText = originalText;
+                    showAlert(err.message, 'error');
+                });
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // UI Loading State
+            const signupBtn = document.querySelector('#signupForm button[type="submit"]');
+            const originalText = signupBtn.innerText;
+            signupBtn.disabled = true;
+            signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রসেসিং হচ্ছে...';
+
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const pass = document.getElementById('signupPassword').value;
+            const confirmPass = document.getElementById('signupConfirmPassword').value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const refCode = document.getElementById('signupRefer').value.trim();
+
+            if (pass !== confirmPass) {
+                signupBtn.disabled = false;
+                signupBtn.innerText = originalText;
+                return showAlert("পাসওয়ার্ড মিলছে না!", 'error');
+            }
+            if (pass.length < 6) {
+                signupBtn.disabled = false;
+                signupBtn.innerText = originalText;
+                return showAlert("পাসওয়ার্ড অন্তত ৬ সংখ্যার হতে হবে", 'warning');
+            }
+
+            // Fetch IP for Tracking (Admin Feature Hook)
+            fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => data.ip)
+            .catch(() => "Unknown") // Fallback if API fails
+            .then(userIP => {
+                // Continue with Signup
+                auth.createUserWithEmailAndPassword(email, pass).then(cred => {
+                    const uid = cred.user.uid;
+                    const newRefCode = "REF" + Math.floor(100000 + Math.random() * 900000);
+                    
+                    const newUser = {
+                        name: name,
+                        email: email,
+                        gender: gender,
+                        balance: appSettings.signupBonus || 0,
+                        incomeWallet: 0,
+                        vipLevel: 0,
+                        refCode: newRefCode,
+                        upline: null,
+                        refIncome: 0,
+                        joinedDate: new Date().toISOString(),
+                        lastClaim: 0,
+                        hasDeposited: false,
+                        isBanned: false,
+                        ip: userIP // Storing IP
+                    };
+
+                    // Save user data
+                    db.ref('users/' + uid).set(newUser).then(() => {
+                        if (refCode) handleReferral(refCode, uid);
+                        
+                        // Send Verification Email
+                        cred.user.sendEmailVerification().then(() => {
+                            // Sign out immediately
+                            auth.signOut().then(() => {
+                                signupBtn.disabled = false;
+                                signupBtn.innerText = originalText;
+                                Swal.fire({
+                                    title: 'রেজিস্ট্রেশন সফল!',
+                                    text: 'আপনার ইমেইলে একটি ভেরিফিকেশন লিংক পাঠানো হয়েছে। দয়া করে ইমেইল ভেরিফাই করে লগইন করুন।',
+                                    icon: 'success',
+                                    background: '#1e293b',
+                                    color: '#fff',
+                                    confirmButtonColor: '#d4af37'
+                                }).then(() => {
+                                    toggleAuth('login');
+                                });
+                            });
+                        });
+                    });
+                }).catch(err => {
+                    signupBtn.disabled = false;
+                    signupBtn.innerText = originalText;
+                    showAlert(err.message, 'error');
+                });
+            });
+        });
+
+        function handleReferral(refCode, newUid) {
+            db.ref('users').orderByChild('refCode').equalTo(refCode).once('value', snapshot => {
+                if(snapshot.exists()) {
+                    db.ref('users/' + newUid).update({ upline: refCode });
+                }
+            });
+        }
+
+        function logout() {
+            auth.signOut().then(() => location.reload());
+        }
+
+        // Resend Verification Email
+        function resendVerification() {
+            if(currentUser) {
+                currentUser.sendEmailVerification()
+                .then(() => showToast('success', 'লিংক পাঠানো হয়েছে! ইমেইল চেক করুন।'))
+                .catch(err => showToast('error', err.message));
+            }
+        }
+
+        // NEW FEATURE: Password Reset via Email
+        function resetPassword() {
+            const email = document.getElementById('loginEmail').value;
+            if(!email) return showToast('warning', 'লগইন বক্সে ইমেইল লিখুন');
+            auth.sendPasswordResetEmail(email)
+                .then(() => showAlert('আপনার ইমেইলে রিসেট লিংক পাঠানো হয়েছে।', 'success'))
+                .catch(e => showAlert(e.message, 'error'));
+        }
+
+        function openForgotPass() { resetPassword(); }
+
+        function openPrivacyPolicy(e) { e.preventDefault(); window.open(appSettings.privacyLink, '_blank'); }
+
+        function toggleAuth(type) {
+            if(type === 'signup') {
+                document.getElementById('loginCard').style.display = 'none';
+                document.getElementById('signupCard').style.display = 'block';
+            } else {
+                document.getElementById('signupCard').style.display = 'none';
+                document.getElementById('loginCard').style.display = 'block';
+            }
+        }
+
+        function togglePass(id, icon) {
+            const input = document.getElementById(id);
+            if(input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // --- UI UTILS: File Upload ---
+        function handleFileSelect(inputId, displayId) {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(displayId);
+            if(input.files && input.files[0]) {
+                display.style.display = 'block';
+                display.innerText = "Selected: " + input.files[0].name;
+            }
+        }
+
+        // --- NOTIFICATIONS & LEADERBOARD ---
+        function loadNotifications() {
+            db.ref('notifications').on('value', snapshot => {
+                const list = document.getElementById('notifList');
+                list.innerHTML = '';
+                let count = 0;
+                if(snapshot.exists()) {
+                    const notifs = [];
+                    snapshot.forEach(c => notifs.push(c.val()));
+                    notifs.reverse().forEach(n => {
+                        count++;
+                        const p = document.createElement('div');
+                        p.className = 'history-item';
+                        p.innerHTML = `<div style="font-size:13px;">${n.text}</div><div style="font-size:10px; color:#aaa;">${new Date(n.date).toLocaleDateString()}</div>`;
+                        list.appendChild(p);
+                    });
+                    document.getElementById('notifBadge').innerText = count;
+                    document.getElementById('notifBadge').style.display = count > 0 ? 'block' : 'none';
+                }
+            });
+        }
+
+        function loadLeaderboard() {
+            db.ref('users').orderByChild('incomeWallet').limitToLast(10).once('value', snapshot => {
+                const list = document.getElementById('leaderboardList');
+                list.innerHTML = '';
+                let users = [];
+                snapshot.forEach(c => users.push(c.val()));
+                users.reverse(); // Highest first
+                
+                users.forEach((u, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.innerHTML = `
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <b style="color:var(--primary-gold); font-size:16px;">#${index+1}</b>
+                            <div>${u.name}</div>
+                        </div>
+                        <div style="color:#10b981; font-weight:bold;">৳${(u.incomeWallet || 0).toFixed(0)}</div>
+                    `;
+                    list.appendChild(item);
+                });
+            });
+        }
+
+        // --- MAIN APP LOGIC (SECURED) ---
+
+        function renderPlans() {
+            const container = document.getElementById('planListContainer');
+            container.innerHTML = '';
+            if (plans.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:20px;">কোন প্ল্যান পাওয়া যায়নি</p>';
+                return;
+            }
+            plans.forEach(plan => {
+                const isActive = userData.activePlan && userData.activePlan.id === plan.id;
+                const dailyTotal = plan.daily * plan.days;
+                
+                const card = document.createElement('div');
+                card.className = `vip-card ${isActive ? 'active-plan' : ''}`;
+                card.innerHTML = `
+                    <div class="vip-header">
+                        <span style="color:white; font-weight:bold;">${plan.name} ${isActive ? '(বর্তমান)' : ''}</span>
+                        <span class="vip-badge">VIP ${plan.id}</span>
+                    </div>
+                    <div class="vip-body">
+                        <div class="vip-stat">
+                            <div>দৈনিক আয়</div>
+                            <div style="color: #10b981;">৳${plan.daily}</div>
+                        </div>
+                        <div class="vip-stat">
+                            <div>মোট আয়</div>
+                            <div>৳${dailyTotal}</div>
+                        </div>
+                        <div class="vip-stat">
+                            <div>মেয়াদ</div>
+                            <div>${plan.days} দিন</div>
+                        </div>
+                        <div class="vip-price">৳${plan.price}</div>
+                    </div>
+                    <div style="padding: 10px 20px 20px;">
+                        <button class="invest-btn" onclick="buyPlan('${plan.id}')" ${isActive ? 'disabled' : ''}>
+                            ${isActive ? 'কেনা হয়েছে' : 'এখনই কিনুন'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // SECURED: Use Transaction for Plan Purchase
+        function buyPlan(planId) {
+            const plan = plans.find(p => p.id === planId);
+            if (!plan) return;
+            if(userData.activePlan && !confirm("আপনি কি আগের প্ল্যান বাদ দিয়ে নতুন প্ল্যান কিনতে চান?")) return;
+            if (userData.balance < plan.price) {
+                showToast('error', "পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।");
+                openModal('depositModal');
+                return;
+            }
+            if (confirm(`${plan.name} প্ল্যানটি ${plan.price} টাকা দিয়ে কিনতে চান?`)) {
+                
+                db.ref('users/' + currentUser.uid).transaction(currentUserData => {
+                    if (currentUserData === null) return currentUserData;
+                    if ((currentUserData.balance || 0) < plan.price) {
+                        return; // Abort transaction if insufficient funds
+                    }
+                    currentUserData.balance -= plan.price;
+                    currentUserData.vipLevel = plan.id;
+                    currentUserData.hasDeposited = true;
+                    currentUserData.activePlan = {
+                        id: plan.id,
+                        name: plan.name,
+                        daily: plan.daily,
+                        price: plan.price,
+                        days: plan.days,
+                        purchaseDate: Date.now()
+                    };
+                    return currentUserData;
+                }, (error, committed, snapshot) => {
+                    if (error) {
+                        showAlert('Error: ' + error.message, 'error');
+                    } else if (!committed) {
+                        showAlert('ব্যালেন্স সমস্যা। পেজটি রিফ্রেশ করুন।', 'error');
+                    } else {
+                        if (userData.upline) distributeCommission(userData.upline, plan.price);
+                        showToast('success', "সফলভাবে প্ল্যান কেনা হয়েছে!");
+                    }
+                });
+            }
+        }
+
+        function distributeCommission(uplineCode, planPrice) {
+            db.ref('users').orderByChild('refCode').equalTo(uplineCode).once('value', snapshot => {
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const lvl1Uid = child.key;
+                        const lvl1User = child.val();
+                        const comm1 = planPrice * 0.10;
+                        addCommission(lvl1Uid, comm1);
+
+                        if(lvl1User.upline) {
+                            db.ref('users').orderByChild('refCode').equalTo(lvl1User.upline).once('value', snap2 => {
+                                if(snap2.exists()) {
+                                    snap2.forEach(child2 => {
+                                        const lvl2Uid = child2.key;
+                                        const lvl2User = child2.val();
+                                        const comm2 = planPrice * 0.03;
+                                        addCommission(lvl2Uid, comm2);
+
+                                        if(lvl2User.upline) {
+                                            db.ref('users').orderByChild('refCode').equalTo(lvl2User.upline).once('value', snap3 => {
+                                                if(snap3.exists()) {
+                                                    snap3.forEach(child3 => {
+                                                        const lvl3Uid = child3.key;
+                                                        const comm3 = planPrice * 0.01;
+                                                        addCommission(lvl3Uid, comm3);
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function addCommission(uid, amount) {
+             db.ref('users/' + uid).transaction(uData => {
+                if(uData) {
+                    uData.incomeWallet = (uData.incomeWallet || 0) + amount;
+                    uData.refIncome = (uData.refIncome || 0) + amount;
+                }
+                return uData;
+            });
+        }
+
+        // Daily Claim Removed
+
+        // --- NEW FEATURE: SCRATCH CARD ---
+        function initScratchCard() {
+            const canvas = document.getElementById('scratchCanvas');
+            const ctx = canvas.getContext('2d');
+            const wrapper = document.querySelector('.scratch-wrapper');
+            const today = new Date().toDateString();
+
+            // Reset if needed
+            ctx.clearRect(0,0,300,150);
+
+            if (userData.lastScratch === today) {
+                wrapper.style.opacity = '0.5';
+                wrapper.style.pointerEvents = 'none';
+                document.getElementById('scratchAmount').innerText = "Done";
+                return;
+            } else {
+                wrapper.style.opacity = '1';
+                wrapper.style.pointerEvents = 'auto';
+            }
+
+            // Set Reward behind canvas (Dynamic from Admin)
+            const min = appSettings.scratchRewardMin || 1;
+            const max = appSettings.scratchRewardMax || 5;
+            const reward = Math.floor(Math.random() * (max - min + 1)) + min;
+            document.getElementById('scratchAmount').innerText = "৳" + reward;
+
+            // Draw Cover
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = '#C0C0C0';
+            ctx.fillRect(0, 0, 300, 150);
+            ctx.font = "20px Arial";
+            ctx.fillStyle = "#000";
+            ctx.fillText("Scratch Here", 90, 80);
+
+            let isDrawing = false;
+            let scratchedPixels = 0;
+
+            function scratch(e) {
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                scratchedPixels++;
+
+                // Trigger win after some scratching
+                if (scratchedPixels > 150) { 
+                    isDrawing = false;
+                    canvas.style.display = 'none'; // Reveal all
+                    
+                    // Award
+                    db.ref('users/' + currentUser.uid).transaction(d => {
+                        if(d) { 
+                            if(d.lastScratch === today) return; // double check
+                            d.incomeWallet = (d.incomeWallet||0) + reward; 
+                            d.lastScratch = today; 
+                        }
+                        return d;
+                    }).then(() => showToast('success', reward + ' টাকা জিতেছেন!'));
+                }
+            }
+
+            canvas.addEventListener('mousedown', () => isDrawing = true);
+            canvas.addEventListener('touchstart', () => isDrawing = true);
+            canvas.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('touchend', () => isDrawing = false);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchmove', scratch);
+        }
+
+        // --- SPIN WHEEL LOGIC (SECURED) ---
+        function openSpinModal() { openModal('spinModal'); }
+        
+        function spinWheel() {
+            const today = new Date().toDateString();
+            if(userData.lastSpin === today) return showToast('warning', "আজকের স্পিন শেষ! আগামীকাল আবার চেষ্টা করুন।");
+
+            const wheel = document.getElementById('wheel');
+            const deg = Math.floor(3600 + Math.random() * 360); // Minimum 10 spins
+            wheel.style.transform = `rotate(${deg}deg)`;
+
+            setTimeout(() => {
+                const min = appSettings.spinMin || 1;
+                const max = appSettings.spinMax || 5;
+                const reward = Math.floor(Math.random() * (max - min + 1)) + min;
+                
+                db.ref('users/' + currentUser.uid).transaction(d => {
+                    if(d) {
+                         if(d.lastSpin === today) return; 
+                         d.incomeWallet = (d.incomeWallet || 0) + reward;
+                         d.lastSpin = today;
+                    }
+                    return d;
+                }).then(() => {
+                    showToast('success', `অভিনন্দন! আপনি ${reward} টাকা জিতেছেন!`);
+                    closeModal('spinModal');
+                    wheel.style.transform = 'rotate(0deg)'; 
+                });
+            }, 4000);
+        }
+
+        // --- DEPOSIT & WITHDRAW ---
+        document.getElementById('depositForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            if (btn.disabled) return;
+            const amount = parseFloat(document.getElementById('depAmount').value);
+            const method = document.getElementById('depMethod').value;
+            const trx = document.getElementById('depTrx').value;
+            
+            // Image (Simulated)
+            const fileInput = document.getElementById('depScreenshot');
+            const fileName = (fileInput.files && fileInput.files[0]) ? fileInput.files[0].name : "No Image";
+
+            // Validation
+            if (amount <= 0) return showToast('error', "সঠিক পরিমাণ দিন।");
+            if (amount > 5000) return showToast('error', "সর্বোচ্চ ডিপোজিট ৫০০০ টাকা।");
+            if (amount < appSettings.minDeposit) return showToast('error', `মিনিমাম ডিপোজিট ${appSettings.minDeposit} টাকা।`);
+
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+            const reqData = {
+                uid: currentUser.uid,
+                amount: amount,
+                method: method,
+                trx: trx,
+                screenshot: fileName, 
+                status: 'pending',
+                date: new Date().toISOString()
+            };
+            db.ref('deposits').push(reqData).then(() => {
+                showAlert("ডিপোজিট রিকোয়েস্ট জমা হয়েছে।", 'success');
+                this.reset();
+                document.getElementById('depFileName').style.display = 'none';
+                closeModal('depositModal');
+            }).catch(err => showAlert(err.message, 'error')).finally(() => { btn.disabled = false; btn.innerText = "রিকোয়েস্ট পাঠান"; });
+        });
+
+        document.getElementById('withdrawForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            if (btn.disabled) return;
+            const amount = parseFloat(document.getElementById('withAmount').value);
+            const method = document.getElementById('withMethod').value;
+            const number = document.getElementById('withNumber').value;
+            
+            // VALIDATION: Phone Regex
+            const phoneRegex = /^01[3-9]\d{8}$/;
+            if (!phoneRegex.test(number)) return showToast('error', "সঠিক বাংলাদেশি মোবাইল নাম্বার দিন (যেমন: 017...)");
+
+            if (amount <= 0) return showToast('error', "সঠিক পরিমাণ দিন।");
+            if (!userData.activePlan && !userData.hasDeposited) return showToast('warning', "উইথড্রো করার জন্য অন্তত একবার প্ল্যান কিনতে হবে।");
+            if (amount > 5000) return showToast('error', "সর্বোচ্চ উইথড্র ৫০০০ টাকা।");
+            if (amount < appSettings.minWithdraw) return showToast('error', `মিনিমাম উইথড্রো ${appSettings.minWithdraw} টাকা।`);
+            if (userData.incomeWallet < amount) return showToast('error', "ইনকাম ব্যালেন্স অপর্যাপ্ত।");
+
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+            const fee = amount * (appSettings.withdrawCharge / 100);
+            const final = amount - fee;
+
+            // SECURED: Deduct Balance First via Transaction
+            db.ref('users/' + currentUser.uid).transaction(d => {
+                if(d) {
+                    if((d.incomeWallet || 0) < amount) return; // abort
+                    d.incomeWallet -= amount;
+                }
+                return d;
+            }, (error, committed) => {
+                if(committed) {
+                    const reqData = {
+                        uid: currentUser.uid,
+                        amount: amount,
+                        fee: fee,
+                        finalAmount: final,
+                        method: method,
+                        number: number,
+                        status: 'pending',
+                        date: new Date().toISOString()
+                    };
+                    db.ref('withdrawals').push(reqData).then(() => {
+                        showAlert("উত্তোলন রিকোয়েস্ট সফল হয়েছে!", 'success');
+                        this.reset();
+                        closeModal('withdrawModal');
+                    });
+                } else {
+                     showToast('error', "ব্যালেন্স সমস্যা। আবার চেষ্টা করুন।");
+                }
+                btn.disabled = false; btn.innerText = "উত্তোলন করুন";
+            });
+        });
+
+        function calculateWithdrawFee() {
+            const amtInput = document.getElementById('withAmount');
+            if (amtInput.value > 5000) amtInput.value = 5000;
+            if (amtInput.value < 0) amtInput.value = 0;
+            const amt = parseFloat(amtInput.value) || 0;
+            const fee = amt * (appSettings.withdrawCharge / 100);
+            document.getElementById('receiveAmount').innerText = (amt - fee).toFixed(2);
+        }
+
+        // --- TEAM & HIERARCHY (NEW 5-LEVEL SYSTEM) ---
+        function copyRefCode() {
+            const code = userData.refCode;
+            if(code) { navigator.clipboard.writeText(code); showToast('success', "রেফার কোড কপি হয়েছে"); }
+        }
+
+        function bindReferrer() {
+            const code = document.getElementById('bindRefInput').value.trim();
+            if (code === userData.refCode) return showToast('error', "নিজের কোড ব্যবহার করা যাবে না!");
+            db.ref('users').orderByChild('refCode').equalTo(code).once('value', snapshot => {
+                if (!snapshot.exists()) return showToast('error', "ভুল কোড!");
+                db.ref('users/' + currentUser.uid).update({ upline: code }).then(() => {
+                    showToast('success', "সফলভাবে জয়েন করেছেন!");
+                    location.reload();
+                });
+            });
+        }
+
+        // Recursive function to load team
+        function loadTeamTree() {
+            if(!userData.refCode) return;
+            const root = document.getElementById('teamTreeRoot');
+            root.innerHTML = '';
+            
+            // Fetch Level 1 (Direct Referrals)
+            db.ref('users').orderByChild('upline').equalTo(userData.refCode).once('value', snapshot => {
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const member = child.val();
+                        root.appendChild(createTeamNode(member, 1));
+                    });
+                } else {
+                    root.innerHTML = '<p style="text-align:center; color:#666; padding: 20px;">কোন মেম্বার নেই</p>';
+                }
+                // Calculate ref income sum locally or use stored value
+                document.getElementById('refIncome').innerText = (userData.refIncome || 0).toFixed(2);
+            });
+        }
+
+        function createTeamNode(member, level) {
+            const container = document.createElement('div');
+            
+            const card = document.createElement('div');
+            card.className = 'team-member-card';
+            card.innerHTML = `
+                <div class="member-info">
+                    <div style="color: ${level === 1 ? 'var(--primary-gold)' : 'white'}">Level ${level}: ${member.name}</div>
+                    <div>Joined: ${new Date(member.joinedDate).toLocaleDateString()}</div>
+                    <div style="color: #10b981;">Plan: ${member.activePlan ? member.activePlan.name : 'Free'}</div>
+                </div>
+                ${level < 5 ? '<i class="fas fa-chevron-right expand-icon"></i>' : ''}
+            `;
+            
+            container.appendChild(card);
+
+            // Container for children
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'team-node';
+            container.appendChild(childrenContainer);
+
+            if (level < 5) {
+                card.onclick = (e) => {
+                    e.stopPropagation();
+                    // Toggle Open
+                    if (childrenContainer.classList.contains('open')) {
+                        childrenContainer.classList.remove('open');
+                        container.classList.remove('expanded');
+                    } else {
+                        // Check if loaded
+                        if (childrenContainer.innerHTML === '') {
+                             childrenContainer.innerHTML = '<p style="font-size:10px; color:#aaa; padding:5px;">Loading...</p>';
+                             db.ref('users').orderByChild('upline').equalTo(member.refCode).once('value', snap => {
+                                 childrenContainer.innerHTML = '';
+                                 if (snap.exists()) {
+                                     snap.forEach(child => {
+                                         childrenContainer.appendChild(createTeamNode(child.val(), level + 1));
+                                     });
+                                 } else {
+                                     childrenContainer.innerHTML = '<p style="font-size:10px; color:#aaa; padding:5px;">No members</p>';
+                                 }
+                             });
+                        }
+                        childrenContainer.classList.add('open');
+                        container.classList.add('expanded');
+                    }
+                };
+            }
+
+            return container;
+        }
+
+
+        // --- JOB SYSTEM ---
+
+        function openJobSystem(tab = 'allJobs') {
+            document.getElementById('jobOverlay').style.display = 'block';
+            checkJobPosterStatus();
+            const navItems = document.querySelectorAll('.job-nav-item');
+            if(tab === 'posted') switchJobTab('postedJobs', navItems[1]);
+            else if(tab === 'history') switchJobTab('workHistory', navItems[2]);
+            else switchJobTab('allJobs', navItems[0]); 
+        }
+
+        function closeJobOverlay() { 
+            document.getElementById('jobOverlay').style.display = 'none'; 
+        }
+
+        function checkJobPosterStatus() {
+            const reqSection = document.getElementById('posterReqSection');
+            const createBtn = document.getElementById('createJobBtn');
+            const postedTab = document.querySelectorAll('.job-nav-item')[1];
+
+            if (userData.isJobPoster) {
+                reqSection.style.display = 'none';
+                createBtn.style.display = 'inline-block';
+                postedTab.style.display = 'inline-block';
+            } else {
+                if (userData.jobPosterReqStatus === 'pending') {
+                     reqSection.innerHTML = '<p style="color:orange;">রিকোয়েস্ট পেন্ডিং আছে...</p>';
+                } else {
+                    reqSection.style.display = 'block';
+                }
+                createBtn.style.display = 'none';
+                postedTab.style.display = 'none';
+            }
+        }
+
+        function requestPosterStatus() {
+            const minBal = appSettings.minBalanceForPosterReq || 300;
+            if (userData.balance < minBal) return showToast('error', `ন্যূনতম ${minBal} টাকা থাকতে হবে।`);
+            if (userData.jobPosterReqStatus === 'pending') return showToast('warning', "রিকোয়েস্ট পেন্ডিং আছে।");
+            
+            if (confirm(`আপনি কি জব পোস্টার হতে চান?`)) {
+                db.ref('users/' + currentUser.uid).update({ jobPosterReqStatus: 'pending' });
+                db.ref('poster_requests').push({
+                    uid: currentUser.uid,
+                    name: userData.name,
+                    date: new Date().toISOString(),
+                    status: 'pending'
+                }).then(() => {
+                    showToast('success', "রিকোয়েস্ট পাঠানো হয়েছে।");
+                    checkJobPosterStatus();
+                });
+            }
+        }
+
+        function switchJobTab(tabId, el) {
+            document.querySelectorAll('.job-nav-item').forEach(i => i.classList.remove('active'));
+            if(el) el.classList.add('active');
+            
+            document.getElementById('allJobsContainer').style.display = 'none';
+            document.getElementById('postedJobsContainer').style.display = 'none';
+            document.getElementById('workHistoryContainer').style.display = 'none';
+            
+            document.getElementById(tabId + 'Container').style.display = 'block';
+            
+            if(tabId === 'allJobs') loadJobs();
+            if(tabId === 'postedJobs') loadMyJobs();
+            if(tabId === 'workHistory') loadMyWorkHistory();
+        }
+
+        function loadJobs() {
+            db.ref('jobs').on('value', snapshot => {
+                const container = document.getElementById('jobListContainer');
+                container.innerHTML = '';
+                loadedJobs = {}; 
+
+                if (snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const job = child.val();
+                        const jobId = child.key;
+                        loadedJobs[jobId] = job; 
+                        
+                        if (job.status === 'active' && job.filled < job.slots) {
+                            const div = document.createElement('div');
+                            div.className = 'job-card';
+                            div.innerHTML = `
+                                <h4>${job.title}</h4>
+                                <p style="font-size:12px; color:#ccc; margin-bottom:5px;">${job.desc ? job.desc.substring(0, 50)+'...' : 'No details'}</p>
+                                <div class="job-meta">
+                                    <span><i class="fas fa-users"></i> ${job.filled}/${job.slots}</span>
+                                    <span class="job-reward">৳${job.reward}</span>
+                                </div>
+                                <button class="job-action-btn" onclick="initJobTask('${jobId}')">কাজ করুন</button>
+                            `;
+                            container.appendChild(div);
+                        }
+                    });
+                } else {
+                    container.innerHTML = '<p style="text-align: center; color: #aaa; padding-top:20px;">বর্তমানে কোনো জব নেই।</p>';
+                }
+            });
+        }
+
+        window.initJobTask = function(jobId) {
+            const job = loadedJobs[jobId];
+            if (job) {
+                openSubmitJob(jobId);
+            } else {
+                db.ref('jobs/' + jobId).once('value', s => {
+                    if(s.exists()){
+                        loadedJobs[jobId] = s.val();
+                        openSubmitJob(jobId);
+                    } else {
+                        showToast('error', "জবটি পাওয়া যায়নি।");
+                    }
+                });
+            }
+        };
+
+        document.getElementById('jobReward').addEventListener('input', calcJobCost);
+        document.getElementById('jobSlots').addEventListener('input', calcJobCost);
+        function calcJobCost() {
+            const r = document.getElementById('jobReward').value;
+            const s = document.getElementById('jobSlots').value;
+            document.getElementById('totalJobCost').innerText = `মোট খরচ: ${r*s} টাকা`;
+        }
+
+        document.getElementById('createJobForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('jobTitle').value;
+            const desc = document.getElementById('jobDesc').value;
+            const link = document.getElementById('jobLink').value;
+            const proofLink = document.getElementById('jobProofLink').value; 
+            const contact = document.getElementById('jobContact').value;
+            const reward = parseFloat(document.getElementById('jobReward').value);
+            const slots = parseInt(document.getElementById('jobSlots').value);
+            const totalCost = reward * slots;
+
+            if (userData.balance < totalCost) return showToast('error', "মেইন ব্যালেন্স অপর্যাপ্ত!");
+
+            if (confirm(`মোট খরচ হবে ${totalCost} টাকা। পোস্ট করবেন?`)) {
+                db.ref('users/' + currentUser.uid).transaction(d => {
+                    if(d && d.balance >= totalCost) { d.balance -= totalCost; }
+                    else return;
+                    return d;
+                }, (err, committed) => {
+                    if(committed) {
+                        const newJob = {
+                            posterUid: currentUser.uid,
+                            title: title, desc: desc, link: link, proofLink: proofLink,
+                            contact: contact, reward: reward, slots: slots, filled: 0,
+                            status: 'active', date: new Date().toISOString()
+                        };
+                        db.ref('jobs').push(newJob).then(() => {
+                            showToast('success', "জব পোস্ট সফল হয়েছে!");
+                            this.reset();
+                            closeModal('createJobModal');
+                            openJobSystem('posted'); 
+                        });
+                    } else {
+                        showToast('error', "ব্যালেন্স সমস্যা");
+                    }
+                });
+            }
+        });
+
+        function loadMyJobs() {
+            db.ref('jobs').orderByChild('posterUid').equalTo(currentUser.uid).on('value', snapshot => {
+                const container = document.getElementById('myPostedJobsList');
+                container.innerHTML = '';
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const job = child.val();
+                        const jobId = child.key;
+                        const div = document.createElement('div');
+                        div.className = 'job-card';
+                        div.innerHTML = `
+                            <h4>${job.title}</h4>
+                            <div class="job-meta">
+                                <span>Slots: ${job.filled}/${job.slots}</span>
+                                <span class="job-reward">৳${job.reward}</span>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <button class="job-action-btn" style="background:#334155;" onclick="viewSubmissions('${jobId}')">Submissions</button>
+                                ${job.status === 'active' ? '<span style="color:#10b981; font-size:12px; align-self:center;">Active</span>' : '<span style="color:red; font-size:12px; align-self:center;">Done</span>'}
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                     container.innerHTML = '<p style="text-align: center; color: #aaa;">আপনি কোনো জব পোস্ট করেননি।</p>';
+                }
+            });
+        }
+
+        function viewSubmissions(jobId) {
+            openModal('viewSubmissionsModal');
+            const container = document.getElementById('submissionListContainer');
+            container.innerHTML = 'Loading...';
+
+            db.ref('job_submissions').orderByChild('jobId').equalTo(jobId).once('value', snapshot => {
+                container.innerHTML = '';
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const sub = child.val();
+                        const subId = child.key;
+                        if(sub.status === 'pending') {
+                            const div = document.createElement('div');
+                            div.className = 'history-item';
+                            div.style.display = 'block';
+                            div.innerHTML = `
+                                <div style="font-weight:bold; color:var(--primary-gold); margin-bottom:5px;">Worker: ${sub.workerName}</div>
+                                <div style="background:#0f172a; padding:10px; font-size:12px; border-radius:5px; margin-bottom:10px;">
+                                    ${sub.proof}
+                                    ${sub.proofImage ? `<br><span style="color:var(--success); font-size:10px;">Attached: ${sub.proofImage}</span>` : ''}
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <button class="gold-btn" style="margin:0; padding:5px; font-size:12px;" onclick="approveWork('${subId}', '${sub.workerUid}', ${sub.reward}, '${jobId}')">Approve</button>
+                                    <button class="gold-btn" style="margin:0; padding:5px; font-size:12px; background:var(--danger); color:white;" onclick="rejectWork('${subId}')">Reject</button>
+                                </div>
+                            `;
+                            container.appendChild(div);
+                        }
+                    });
+                    if(container.innerHTML === '') container.innerHTML = '<p style="text-align:center;">কোন পেন্ডিং সাবমিশন নেই।</p>';
+                } else {
+                    container.innerHTML = '<p style="text-align:center;">কোন সাবমিশন পাওয়া যায়নি।</p>';
+                }
+            });
+        }
+
+        function approveWork(subId, workerUid, amount, jobId) {
+            if(!confirm("এপ্রুভ করলে ইউজারের একাউন্টে টাকা যোগ হবে। নিশ্চিত?")) return;
+            
+            db.ref('job_submissions/' + subId).update({ status: 'approved' });
+            
+            db.ref('users/' + workerUid).transaction(uData => {
+                if(uData) uData.incomeWallet = (uData.incomeWallet || 0) + amount;
+                return uData;
+            });
+
+            db.ref('jobs/' + jobId).transaction(job => {
+                if(job) {
+                    job.filled = (job.filled || 0) + 1;
+                    if(job.filled >= job.slots) job.status = 'finished';
+                }
+                return job;
+            });
+            
+            showToast('success', "কাজ এপ্রুভ হয়েছে এবং পেমেন্ট সম্পন্ন হয়েছে।");
+            closeModal('viewSubmissionsModal');
+        }
+
+        function rejectWork(subId) {
+            if(!confirm("রিজেক্ট করবেন?")) return;
+            db.ref('job_submissions/' + subId).update({ status: 'rejected' });
+            showToast('info', "কাজ রিজেক্ট করা হয়েছে।");
+            closeModal('viewSubmissionsModal');
+        }
+
+        function openSubmitJob(jobId) {
+            const jobData = loadedJobs[jobId];
+            if(!jobData) return showToast('error', "জব ডাটা পাওয়া যায়নি।");
+
+            document.getElementById('submitJobId').value = jobId;
+            document.getElementById('submitJobPosterId').value = jobData.posterUid;
+            document.getElementById('submitJobTitle').innerText = jobData.title;
+            document.getElementById('submitJobLinkDisplay').innerHTML = `<a href="${jobData.link}" target="_blank" style="color:#38ef7d; text-decoration:underline;">কাজের লিংক ওপেন করুন</a>`;
+            
+            if(jobData.proofLink) {
+                document.getElementById('submitJobProofLinkDisplay').style.display = 'block';
+                document.getElementById('submitJobProofLinkDisplay').innerHTML = `প্রুভ লিংক: <a href="${jobData.proofLink}" target="_blank" style="color:#f59e0b; text-decoration:underline;">এখানে দেখুন</a>`;
+            } else {
+                document.getElementById('submitJobProofLinkDisplay').style.display = 'none';
+            }
+
+            document.getElementById('jobDetailsDisplay').innerText = jobData.desc || "No description";
+            document.getElementById('submitJobModal').dataset.reward = jobData.reward;
+            
+            openModal('submitJobModal');
+        }
+
+        document.getElementById('jobProofForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const jobId = document.getElementById('submitJobId').value;
+            const posterUid = document.getElementById('submitJobPosterId').value;
+            const proof = document.getElementById('jobProofText').value;
+            const reward = parseFloat(document.getElementById('submitJobModal').dataset.reward);
+
+            // Image (Simulated)
+            const fileInput = document.getElementById('jobProofImage');
+            const fileName = (fileInput.files && fileInput.files[0]) ? fileInput.files[0].name : "";
+
+            db.ref('job_submissions').orderByChild('workerUid').equalTo(currentUser.uid).once('value', snapshot => {
+                let alreadyDone = false;
+                if(snapshot.exists()){
+                    snapshot.forEach(c => { if(c.val().jobId === jobId) alreadyDone = true; });
+                }
+                if(alreadyDone) return showToast('warning', "আপনি ইতিমধ্যে এই কাজটি জমা দিয়েছেন!");
+
+                const submission = {
+                    jobId: jobId,
+                    posterUid: posterUid,
+                    workerUid: currentUser.uid,
+                    workerName: userData.name,
+                    proof: proof,
+                    proofImage: fileName, // Saving file name
+                    reward: reward,
+                    status: 'pending',
+                    date: new Date().toISOString()
+                };
+
+                db.ref('job_submissions').push(submission).then(() => {
+                    showAlert("প্রমাণ জমা দেওয়া হয়েছে।", 'success');
+                    this.reset();
+                    document.getElementById('jobFileName').style.display = 'none';
+                    closeModal('submitJobModal');
+                    openJobSystem('history');
+                });
+            });
+        });
+
+        function loadMyWorkHistory() {
+            db.ref('job_submissions').orderByChild('workerUid').equalTo(currentUser.uid).on('value', snapshot => {
+                const container = document.getElementById('myWorkList');
+                container.innerHTML = '';
+                if(snapshot.exists()) {
+                    const subs = [];
+                    snapshot.forEach(c => subs.push(c.val()));
+                    subs.reverse().forEach(sub => {
+                        const div = document.createElement('div');
+                        div.className = 'history-item';
+                        let badgeClass = sub.status === 'approved' ? 'status-approved' : (sub.status === 'rejected' ? 'status-rejected' : 'status-pending');
+                        div.innerHTML = `
+                            <div>
+                                <div style="font-weight:bold; color:white;">Job ID: ${sub.jobId.substring(0,6)}...</div>
+                                <div style="font-size:12px; color:#aaa;">${new Date(sub.date).toLocaleDateString()}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-weight:bold; color:var(--primary-gold);">৳${sub.reward}</div>
+                                <span class="status-badge ${badgeClass}">${sub.status}</span>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    container.innerHTML = '<p style="text-align: center; color: #aaa;">আপনি কোনো কাজ করেননি।</p>';
+                }
+            });
+        }
+
+        // --- UTILS ---
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            showToast('success', "কপি হয়েছে");
+        }
+
+        function openAdminLink(key) {
+            if(appSettings[key]) window.open(appSettings[key], '_blank');
+            else showToast('info', "লিংক সেট করা হয়নি");
+        }
+
+        // --- HISTORY PAGE ---
+        function openHistoryPage() {
+            document.getElementById('historyPage').style.display = 'block';
+            loadHistory('depHistory');
+        }
+        function closeHistoryPage() { document.getElementById('historyPage').style.display = 'none'; }
+        
+        function switchHistoryTab(type, el) {
+            document.querySelectorAll('.h-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.history-content-box').forEach(b => b.style.display = 'none');
+            el.classList.add('active');
+            document.getElementById(type).style.display = 'block';
+            loadHistory(type);
+        }
+
+        function loadHistory(type) {
+            const container = document.getElementById(type);
+            const dbPath = type === 'depHistory' ? 'deposits' : 'withdrawals';
+            db.ref(dbPath).orderByChild('uid').equalTo(currentUser.uid).once('value', snapshot => {
+                container.innerHTML = '';
+                if(!snapshot.exists()) {
+                    container.innerHTML = '<p style="text-align:center; padding:20px;">কোন লেনদেন পাওয়া যায়নি</p>';
+                    return;
+                }
+                const items = [];
+                snapshot.forEach(c => items.push(c.val()));
+                items.sort((a,b) => new Date(b.date) - new Date(a.date));
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    let statusClass = item.status === 'approved' ? 'status-approved' : (item.status === 'rejected' ? 'status-rejected' : 'status-pending');
+                    div.innerHTML = `
+                        <div>
+                            <div style="font-weight:bold; color:white;">${type === 'depHistory' ? 'Deposit' : 'Withdraw'} (${item.method})</div>
+                            <div style="font-size:12px; color:#aaa;">${new Date(item.date).toLocaleString()}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:bold; color:var(--primary-gold);">৳${item.amount}</div>
+                            <span class="status-badge ${statusClass}">${item.status}</span>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        // --- QUIZ LOGIC ---
+        let currentQuizIndex = 0; 
+        let quizScore = 0; 
+        let correctStreak = 0; 
+        let activeQuizzes = [];
+        
+        function startQuiz() {
+            if (!quizzes || quizzes.length === 0) return showToast('info', "বর্তমানে কোনো কুইজ নেই।");
+            
+            document.getElementById('quizOverlay').style.display = 'block';
+            activeQuizzes = [...quizzes].sort(() => 0.5 - Math.random());
+            currentQuizIndex = 0; 
+            quizScore = 0; 
+            correctStreak = 0;
+            
+            updateQuizUI(); 
+            loadQuestion();
+        }
+        
+        function closeQuiz() { document.getElementById('quizOverlay').style.display = 'none'; }
+        
+        function loadQuestion() {
+            const container = document.getElementById('quizContainer');
+            if (!activeQuizzes || activeQuizzes.length === 0) {
+                 container.innerHTML = "<p style='text-align:center;'>কুইজ লোড হতে সমস্যা হয়েছে।</p>";
+                 return;
+            }
+            if (currentQuizIndex >= activeQuizzes.length) {
+                activeQuizzes = [...quizzes].sort(() => 0.5 - Math.random());
+                currentQuizIndex = 0;
+            }
+            
+            const q = activeQuizzes[currentQuizIndex];
+            if(!q) {
+                currentQuizIndex = 0;
+                loadQuestion();
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="quiz-question">${q.question}</div>
+                <div class="quiz-option" onclick="checkAnswer(1, ${q.answer}, ${q.points}, this)">${q.opt1}</div>
+                <div class="quiz-option" onclick="checkAnswer(2, ${q.answer}, ${q.points}, this)">${q.opt2}</div>
+                <div class="quiz-option" onclick="checkAnswer(3, ${q.answer}, ${q.points}, this)">${q.opt3}</div>
+                <div class="quiz-option" onclick="checkAnswer(4, ${q.answer}, ${q.points}, this)">${q.opt4}</div>
+            `;
+        }
+
+        function checkAnswer(selected, correct, points, el) {
+            document.querySelectorAll('.quiz-option').forEach(o => o.classList.add('disabled'));
+            
+            if (selected === correct) {
+                el.style.borderColor = '#10b981'; 
+                el.style.background = 'rgba(16, 185, 129, 0.2)';
+                quizScore += points; 
+                correctStreak++;
+                db.ref('users/' + currentUser.uid).transaction(d => {
+                    if(d) d.incomeWallet = (d.incomeWallet || 0) + points;
+                    return d;
+                });
+                updateQuizUI();
+                setTimeout(() => { 
+                    currentQuizIndex++; 
+                    loadQuestion(); 
+                }, 1000);
+            } else {
+                el.style.borderColor = '#ef4444'; 
+                el.style.background = 'rgba(239, 68, 68, 0.2)';
+                correctStreak = 0; 
+                updateQuizUI();
+                setTimeout(() => {
+                    triggerAdBreak(() => { 
+                        currentQuizIndex++; 
+                        loadQuestion(); 
+                    });
+                }, 500);
+            }
+        }
+        
+        function updateQuizUI() {
+            document.getElementById('quizScore').innerText = quizScore;
+            document.getElementById('streakCount').innerText = correctStreak;
+        }
+
+        // --- CAPTCHA ENTRY LOGIC (Added) ---
+        let currentCaptcha = "";
+        let isCaptchaCoolingDown = false;
+
+        function openCaptcha() {
+            if(isCaptchaCoolingDown) return showToast('warning', "অনুগ্রহ করে অপেক্ষা করুন...");
+            openModal('captchaModal');
+            generateCaptcha();
+        }
+
+        function generateCaptcha() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let result = "";
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            currentCaptcha = result;
+            document.getElementById('captchaDisplay').innerText = result;
+            document.getElementById('captchaInput').value = "";
+            document.getElementById('submitCaptchaBtn').disabled = false;
+        }
+
+        function submitCaptcha() {
+            const userInput = document.getElementById('captchaInput').value.trim().toUpperCase();
+            if (userInput === currentCaptcha) {
+                // Correct
+                const reward = appSettings.captchaReward || 0.10; // Default reward
+                db.ref('users/' + currentUser.uid).transaction(d => {
+                    if(d) d.incomeWallet = (d.incomeWallet || 0) + reward;
+                    return d;
+                }).then(() => {
+                    showToast('success', `সঠিক উত্তর! ${reward} টাকা যোগ হয়েছে।`);
+                    startCaptchaTimer();
+                });
+            } else {
+                showToast('error', "ভুল ক্যাপচা! আবার চেষ্টা করুন।");
+                generateCaptcha();
+            }
+        }
+
+        function startCaptchaTimer() {
+            isCaptchaCoolingDown = true;
+            document.getElementById('submitCaptchaBtn').disabled = true;
+            document.getElementById('captchaDisplay').innerText = "WAIT...";
+            document.getElementById('captchaTimerText').style.display = 'block';
+            let timeLeft = 10;
+            
+            const interval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('capCount').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    isCaptchaCoolingDown = false;
+                    document.getElementById('captchaTimerText').style.display = 'none';
+                    generateCaptcha();
+                }
+            }, 1000);
+        }
+
+        // --- LOTTERY SYSTEM LOGIC (Added) ---
+        let activeLottery = null;
+
+        function openLottery() {
+            openModal('lotteryModal');
+            loadLotteryData();
+        }
+
+        function loadLotteryData() {
+            const infoDiv = document.getElementById('lotteryInfoSection');
+            const buySec = document.getElementById('buyTicketSection');
+
+            db.ref('active_lottery').on('value', snapshot => {
+                if(snapshot.exists()) {
+                    activeLottery = snapshot.val();
+                    infoDiv.innerHTML = `
+                        <p style="font-size:16px; font-weight:bold; color:white;">Lottery Name: ${activeLottery.name || 'Weekly Lottery'}</p>
+                        <p>Draw Date: <span style="color:var(--primary-gold);">${activeLottery.drawDate || 'Coming Soon'}</span></p>
+                        <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                            <span>Prize Money: ৳${activeLottery.prize}</span>
+                            <span>Price: ৳${activeLottery.price}</span>
+                        </div>
+                    `;
+                    buySec.style.display = 'block';
+                } else {
+                    activeLottery = null;
+                    infoDiv.innerHTML = '<p style="text-align:center;">বর্তমানে কোন লটারি চালু নেই।</p>';
+                    buySec.style.display = 'none';
+                }
+            });
+            loadMyTickets();
+        }
+
+        function buyTicket() {
+            if(!activeLottery) return;
+            const price = parseFloat(activeLottery.price);
+            
+            if(userData.balance < price) {
+                return showToast('error', "মেইন ব্যালেন্স পর্যাপ্ত টাকা নেই! ডিপোজিট করুন।");
+            }
+
+            if(confirm(`${price} টাকা দিয়ে লটারি টিকেট কিনবেন?`)) {
+                // Generate unique ticket ID
+                const ticketId = "T-" + Math.floor(100000 + Math.random() * 900000);
+
+                db.ref('users/' + currentUser.uid).transaction(d => {
+                    if(d) {
+                        if((d.balance || 0) < price) return; // abort
+                        d.balance -= price;
+                    }
+                    return d;
+                }, (error, committed) => {
+                    if(committed) {
+                        // Add to participants
+                        const entry = {
+                            uid: currentUser.uid,
+                            name: userData.name,
+                            ticketId: ticketId,
+                            date: new Date().toISOString()
+                        };
+                        db.ref('lottery_participants').push(entry);
+                        
+                        // Add to user's ticket list (optional, but good for quick access)
+                        db.ref('users/' + currentUser.uid + '/tickets').push(entry);
+                        
+                        showAlert(`টিকেট কেনা সফল হয়েছে! আপনার টিকেট নাম্বার: ${ticketId}`, 'success');
+                    } else {
+                        showToast('error', "ব্যালেন্স সমস্যা।");
+                    }
+                });
+            }
+        }
+
+        function loadMyTickets() {
+            db.ref('users/' + currentUser.uid + '/tickets').on('value', snapshot => {
+                const list = document.getElementById('myTicketsList');
+                list.innerHTML = '';
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const t = child.val();
+                        const div = document.createElement('div');
+                        div.className = 'ticket-card';
+                        div.innerHTML = `
+                            <div class="ticket-id">${t.ticketId}</div>
+                            <div style="font-size:10px; color:#aaa;">${new Date(t.date).toLocaleDateString()}</div>
+                        `;
+                        list.appendChild(div);
+                    });
+                } else {
+                    list.innerHTML = '<p style="text-align:center; color:#666; margin-top:10px;">কোন টিকেট কেনা হয়নি</p>';
+                }
+            });
+        }
+
+        // --- NEW FEATURE 1: VIDEO ZONE LOGIC ---
+        function openVideoZone() {
+            document.getElementById('videoOverlay').style.display = 'block';
+            loadVideos();
+        }
+
+        function loadVideos() {
+            db.ref('videos').on('value', snapshot => {
+                const list = document.getElementById('videoListContainer');
+                list.innerHTML = '';
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const video = child.val();
+                        const videoId = child.key; // The Firebase key
+                        const item = document.createElement('div');
+                        item.className = 'video-item';
+                        item.innerHTML = `
+                            <div class="video-info">
+                                <h4>${video.title}</h4>
+                                <p><i class="far fa-clock"></i> ${video.duration}s | <span style="color:var(--primary-gold);">৳${video.reward}</span></p>
+                            </div>
+                            <div class="video-action">
+                                <button onclick="watchVideo('${video.ytId}', ${video.duration}, ${video.reward})">Watch</button>
+                            </div>
+                        `;
+                        list.appendChild(item);
+                    });
+                } else {
+                    list.innerHTML = '<p style="text-align:center; padding-top:20px; color:#ccc;">কোনো ভিডিও পাওয়া যায়নি</p>';
+                }
+            });
+        }
+
+        let videoTimerInterval;
+        let currentVideoReward = 0;
+
+        function watchVideo(ytId, duration, reward) {
+            currentVideoReward = parseFloat(reward);
+            const modal = document.getElementById('videoPlayerModal');
+            const wrapper = document.getElementById('playerWrapper');
+            const timerDisplay = document.getElementById('videoTimerDisplay');
+            const closeBtn = document.getElementById('closeVideoBtn');
+            
+            modal.style.display = 'flex';
+            closeBtn.style.display = 'none';
+            wrapper.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${ytId}?autoplay=1&controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="pointer-events:none;"></iframe>`;
+            
+            let timeLeft = duration;
+            timerDisplay.innerText = timeLeft;
+
+            clearInterval(videoTimerInterval);
+            videoTimerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(videoTimerInterval);
+                    claimVideoReward();
+                }
+            }, 1000);
+        }
+
+        function claimVideoReward() {
+            db.ref('users/' + currentUser.uid).transaction(d => {
+                if(d) d.incomeWallet = (d.incomeWallet || 0) + currentVideoReward;
+                return d;
+            }).then(() => {
+                showToast('success', `অভিনন্দন! ${currentVideoReward} টাকা যোগ হয়েছে।`);
+                document.getElementById('closeVideoBtn').style.display = 'block';
+                document.getElementById('videoTimerDisplay').innerText = "DONE";
+            });
+        }
+
+        function closeVideoPlayer() {
+            document.getElementById('videoPlayerModal').style.display = 'none';
+            document.getElementById('playerWrapper').innerHTML = ''; // Stop video
+            clearInterval(videoTimerInterval);
+        }
+
+        // --- NEW FEATURE 2: PREDICTION LOGIC ---
+        function openPredictions() {
+            document.getElementById('predictionOverlay').style.display = 'block';
+            loadPredictions();
+        }
+
+        function loadPredictions() {
+            db.ref('predictions').on('value', snapshot => {
+                const list = document.getElementById('predictionListContainer');
+                list.innerHTML = '';
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const pred = child.val();
+                        const pid = child.key;
+                        const userVote = (pred.votes && pred.votes[currentUser.uid]) ? pred.votes[currentUser.uid] : null;
+                        
+                        const div = document.createElement('div');
+                        div.className = 'pred-card';
+                        
+                        let buttonsHtml = '';
+                        if(pred.status === 'active' && !userVote) {
+                            buttonsHtml = `
+                                <div class="pred-options">
+                                    <div class="pred-opt-btn" onclick="votePrediction('${pid}', 'A')">${pred.optionA}</div>
+                                    <div class="pred-opt-btn" onclick="votePrediction('${pid}', 'B')">${pred.optionB}</div>
+                                </div>
+                            `;
+                        } else {
+                            buttonsHtml = `
+                                <div class="pred-options">
+                                    <div class="pred-opt-btn ${userVote === 'A' ? 'selected' : ''}" style="cursor:default;">${pred.optionA}</div>
+                                    <div class="pred-opt-btn ${userVote === 'B' ? 'selected' : ''}" style="cursor:default;">${pred.optionB}</div>
+                                </div>
+                                <div class="pred-status">
+                                    ${userVote ? 'আপনি ভোট দিয়েছেন: ' + (userVote === 'A' ? pred.optionA : pred.optionB) : ''}
+                                    <br>স্ট্যাটাস: ${pred.status === 'completed' ? (pred.winner === userVote ? '<span style="color:#10b981">আপনি জিতেছেন!</span>' : '<span style="color:#ef4444">আপনি হেরেছেন</span>') : 'ফলাফলের জন্য অপেক্ষা করুন'}
+                                </div>
+                            `;
+                        }
+
+                        div.innerHTML = `
+                            <div class="pred-question">${pred.question}</div>
+                            ${buttonsHtml}
+                        `;
+                        list.appendChild(div);
+                    });
+                } else {
+                    list.innerHTML = '<p style="text-align:center; color:#ccc;">বর্তমানে কোনো প্রেডিকশন নেই</p>';
+                }
+            });
+        }
+
+        function votePrediction(pid, option) {
+            if(confirm("ভোট কনফার্ম করবেন?")) {
+                db.ref(`predictions/${pid}/votes/${currentUser.uid}`).set(option).then(() => {
+                    showToast('success', "ভোট দেওয়া হয়েছে!");
+                });
+            }
+        }
+
+        // --- AD SYSTEM ---
+        let adCallback = null;
+        function triggerAdBreak(cb) {
+            adCallback = cb;
+            document.getElementById('adTimerOverlay').style.display = 'flex';
+            document.getElementById('watchAdBtn').style.display = 'block';
+            document.getElementById('closeAdBtn').style.display = 'none';
+            document.getElementById('timerDisplay').innerText = "30";
+            
+            document.getElementById('watchAdBtn').onclick = () => {
+                window.open(appSettings.adLink, '_blank');
+                let left = 30;
+                document.getElementById('watchAdBtn').style.display = 'none';
+                const interval = setInterval(() => {
+                    left--; document.getElementById('timerDisplay').innerText = left;
+                    if (left <= 0) {
+                        clearInterval(interval);
+                        document.getElementById('timerDisplay').innerText = "Done";
+                        document.getElementById('closeAdBtn').style.display = 'block';
+                    }
+                }, 1000);
+            };
+        }
+        function closeAdOverlay() {
+            document.getElementById('adTimerOverlay').style.display = 'none';
+            if(adCallback) adCallback();
+            adCallback = null;
+        }
+        
+        // Profile & Promo
+        function updateProfile() {
+            const newName = document.getElementById('editNameInput').value;
+            db.ref('users/' + currentUser.uid).update({name: newName}).then(() => {
+                const newPass = document.getElementById('editNewPass').value;
+                if(newPass && newPass.length >= 6) {
+                    currentUser.updatePassword(newPass).then(() => {
+                        showAlert("প্রোফাইল আপডেট হয়েছে", 'success'); closeModal('editProfileModal');
+                    }).catch(e => showAlert(e.message, 'error'));
+                } else { showAlert("নাম আপডেট হয়েছে", 'success'); closeModal('editProfileModal'); }
+            });
+        }
+
+        // Promo Code Logic Removed
+    </script>
+</body>
+</html>
