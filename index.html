@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <title>Trust Invest - Pro</title>
+    <title>Earn Money</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
@@ -38,9 +38,9 @@
         body {
             background-color: var(--bg-dark);
             color: var(--text-light);
-            padding-bottom: 80px; /* Space for footer */
+            padding-bottom: 80px; 
             overflow-x: hidden;
-            user-select: none; /* App-like feel */
+            user-select: none; 
         }
 
         /* --- Animations --- */
@@ -72,7 +72,6 @@
             color: white; border-radius: 8px; outline: none; padding-right: 40px;
         }
         
-        /* File Upload Style */
         .file-upload-wrapper {
             position: relative; margin-bottom: 15px;
             border: 1px dashed #334155; padding: 15px; border-radius: 8px;
@@ -83,7 +82,6 @@
             position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;
         }
         
-        /* Number input clean style */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -108,13 +106,9 @@
             cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.2s;
         }
         .gold-btn:active { transform: scale(0.98); }
-        .gold-btn:disabled {
-            background: #555; cursor: not-allowed; color: #888; opacity: 0.7;
-        }
+        .gold-btn:disabled { background: #555; cursor: not-allowed; color: #888; opacity: 0.7; }
 
-        .forgot-link {
-            display: block; margin-top: 10px; font-size: 12px; color: var(--danger); cursor: pointer; text-decoration: none;
-        }
+        .forgot-link { display: block; margin-top: 10px; font-size: 12px; color: var(--danger); cursor: pointer; text-decoration: none; }
 
         /* --- Main App Styles --- */
         .container { max-width: 600px; margin: 0 auto; padding: 15px; display: none; }
@@ -150,9 +144,7 @@
             font-size: 13px; margin-top: 10px; display: inline-block;
         }
 
-        .action-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;
-        }
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
         .action-item {
             background: var(--card-bg); padding: 15px 5px; border-radius: 10px;
             text-align: center; font-size: 12px; cursor: pointer;
@@ -206,7 +198,6 @@
             border-top: 1px solid #334155; box-shadow: 0 -5px 10px rgba(0,0,0,0.2);
             z-index: 1000;
         }
-        /* Mobile Keyboard Fix */
         @media (max-height: 500px) {
             .footer-nav { display: none; }
             body { padding-bottom: 20px; }
@@ -224,7 +215,7 @@
             background: var(--card-bg); width: 95%; max-width: 450px; padding: 25px;
             border-radius: 15px; border: 1px solid var(--primary-gold); position: relative; margin: 20px auto;
         }
-        .close-btn { position: absolute; right: 20px; top: 20px; color: white; cursor: pointer; font-size: 24px; }
+        .close-btn { position: absolute; right: 20px; top: 20px; color: white; cursor: pointer; font-size: 24px; z-index: 10;}
         .modal h2 { color: var(--primary-gold); margin-bottom: 20px; text-align: center; }
         .info-box {
             background: rgba(212, 175, 55, 0.1); padding: 15px; border-radius: 8px;
@@ -244,231 +235,68 @@
         .dep-chip:hover { border-color: var(--primary-gold); background: #1e293b; }
 
         /* --- Task & Quiz Styles --- */
-        /* Removed .task-circle and daily task specific styles as requested */
-        
-        .quiz-btn {
-            background: linear-gradient(45deg, #FF512F 0%, #DD2476 100%);
-            color: white; padding: 15px; width: 100%; border-radius: 10px;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 20px;
-        }
-        
-        .captcha-btn {
-            background: linear-gradient(45deg, #1fa2ff 0%, #12d8fa 100%);
-            color: white; padding: 15px; width: 100%; border-radius: 10px;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px;
-        }
+        .quiz-btn { background: linear-gradient(45deg, #FF512F 0%, #DD2476 100%); color: white; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 18px; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .captcha-btn { background: linear-gradient(45deg, #1fa2ff 0%, #12d8fa 100%); color: white; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 18px; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
 
-        /* --- Captcha Styles --- */
-        .captcha-box {
-            background: #334155;
-            padding: 20px;
-            text-align: center;
-            font-size: 30px;
-            font-family: 'Courier New', Courier, monospace;
-            letter-spacing: 5px;
-            color: var(--text-light);
-            border: 2px dashed var(--primary-gold);
-            margin-bottom: 20px;
-            font-weight: bold;
-            user-select: none;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMzM0MTU1Ij48L3JlY3Q+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM0NzU1NjkiPjwvcmVjdD4KPC9zdmc+');
-        }
+        .captcha-box { background: #334155; padding: 20px; text-align: center; font-size: 30px; font-family: 'Courier New', Courier, monospace; letter-spacing: 5px; color: var(--text-light); border: 2px dashed var(--primary-gold); margin-bottom: 20px; font-weight: bold; user-select: none; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMzM0MTU1Ij48L3JlY3Q+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM0NzU1NjkiPjwvcmVjdD4KPC9zdmc+'); }
 
-        /* --- Lottery Styles --- */
-        .ticket-card {
-            background: #1e293b;
-            border: 1px solid var(--primary-gold);
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .ticket-card::before, .ticket-card::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: var(--bg-dark);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+        .ticket-card { background: #1e293b; border: 1px solid var(--primary-gold); border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; }
+        .ticket-card::before, .ticket-card::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--bg-dark); border-radius: 50%; top: 50%; transform: translateY(-50%); }
         .ticket-card::before { left: -10px; }
         .ticket-card::after { right: -10px; }
         .ticket-id { font-family: monospace; font-size: 18px; color: var(--primary-gold); font-weight: bold; }
 
-        /* --- Spin Wheel Styles --- */
-        .spin-btn {
-            background: linear-gradient(45deg, #8E2DE2 0%, #4A00E0 100%);
-            color: white; padding: 15px; width: 100%; border-radius: 10px;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px;
-        }
-        .wheel-container {
-            position: relative; width: 250px; height: 250px; margin: 0 auto 20px;
-            border-radius: 50%; border: 5px solid var(--primary-gold); overflow: hidden;
-            background: conic-gradient(
-                #f6e07b 0deg 60deg, 
-                #1e293b 60deg 120deg, 
-                #f6e07b 120deg 180deg, 
-                #1e293b 180deg 240deg, 
-                #f6e07b 240deg 300deg, 
-                #1e293b 300deg 360deg
-            );
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-        }
-        .wheel-arrow {
-            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; 
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 25px solid var(--danger);
-            z-index: 10;
-        }
-        .spin-center {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 40px; height: 40px; background: white; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-weight: bold; color: black;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5); z-index: 5;
-        }
+        .spin-btn { background: linear-gradient(45deg, #8E2DE2 0%, #4A00E0 100%); color: white; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 18px; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .wheel-container { position: relative; width: 250px; height: 250px; margin: 0 auto 20px; border-radius: 50%; border: 5px solid var(--primary-gold); overflow: hidden; background: conic-gradient( #f6e07b 0deg 60deg, #1e293b 60deg 120deg, #f6e07b 120deg 180deg, #1e293b 180deg 240deg, #f6e07b 240deg 300deg, #1e293b 300deg 360deg ); transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        .wheel-arrow { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid var(--danger); z-index: 10; }
+        .spin-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: black; box-shadow: 0 0 5px rgba(0,0,0,0.5); z-index: 5; }
 
-        /* --- Scratch Card Styles --- */
-        .scratch-wrapper {
-            position: relative; width: 300px; height: 150px; margin: 20px auto;
-            border-radius: 10px; overflow: hidden; border: 2px solid var(--primary-gold);
-            user-select: none; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-        }
-        .scratch-reward {
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            background: white; color: black; display: flex; justify-content: center; align-items: center;
-            flex-direction: column; z-index: 1;
-        }
-        canvas#scratchCanvas {
-            position: absolute; top: 0; left: 0; z-index: 2; cursor: pointer;
-        }
+        .scratch-wrapper { position: relative; width: 300px; height: 150px; margin: 20px auto; border-radius: 10px; overflow: hidden; border: 2px solid var(--primary-gold); user-select: none; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        .scratch-reward { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: white; color: black; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 1; }
+        canvas#scratchCanvas { position: absolute; top: 0; left: 0; z-index: 2; cursor: pointer; }
 
-        /* --- Job Styles (Enhanced) --- */
-        .job-btn {
-            background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%);
-            color: white; padding: 15px; width: 100%; border-radius: 10px;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px;
-        }
-        .job-card {
-            background: #1e293b; border: 1px solid #334155; padding: 15px;
-            border-radius: 10px; margin-bottom: 10px; position: relative;
-        }
+        .job-btn { background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%); color: white; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 18px; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .job-card { background: #1e293b; border: 1px solid #334155; padding: 15px; border-radius: 10px; margin-bottom: 10px; position: relative; }
         .job-card h4 { color: white; font-size: 16px; margin-bottom: 5px; }
         .job-meta { font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between; margin-bottom: 10px; }
         .job-reward { color: var(--primary-gold); font-weight: bold; font-size: 14px; }
-        .job-action-btn {
-            background: var(--primary-gold); border: none; padding: 8px 15px; width: 100%;
-            border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; margin-top: 5px;
-        }
-        
-        /* Job Tabs */
+        .job-action-btn { background: var(--primary-gold); border: none; padding: 8px 15px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; margin-top: 5px; }
         .job-nav { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .job-nav-item { 
-            white-space: nowrap; padding: 8px 15px; background: #334155; border-radius: 20px; 
-            font-size: 12px; cursor: pointer; color: #ccc;
-        }
+        .job-nav-item { white-space: nowrap; padding: 8px 15px; background: #334155; border-radius: 20px; font-size: 12px; cursor: pointer; color: #ccc; }
         .job-nav-item.active { background: var(--primary-gold); color: black; font-weight: bold; }
 
-        /* --- Quiz Overlay Page --- */
-        #quizOverlay, #jobOverlay, #videoOverlay, #predictionOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); z-index: 5000; overflow-y: auto; padding: 20px; padding-bottom: 80px;
-        }
-        .quiz-card {
-            background: var(--card-bg); border-radius: 15px; padding: 20px; margin-top: 20px;
-            border: 1px solid #334155;
-        }
+        #quizOverlay, #jobOverlay, #videoOverlay, #predictionOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 5000; overflow-y: auto; padding: 20px; padding-bottom: 80px; }
+        .quiz-card { background: var(--card-bg); border-radius: 15px; padding: 20px; margin-top: 20px; border: 1px solid #334155; }
         .quiz-question { font-size: 18px; margin-bottom: 20px; color: white; font-weight: bold; }
-        .quiz-option {
-            background: #0f172a; border: 1px solid #334155; padding: 15px;
-            border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;
-        }
+        .quiz-option { background: #0f172a; border: 1px solid #334155; padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
         .quiz-option:hover { border-color: var(--primary-gold); }
         .quiz-option.disabled { pointer-events: none; opacity: 0.6; }
 
-        /* --- Video Zone Styles --- */
-        .video-btn {
-            background: linear-gradient(45deg, #cc2b5e 0%, #753a88 100%);
-            color: white; padding: 15px; width: 100%; border-radius: 10px;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px;
-        }
-        .video-item {
-            background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 15px;
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155;
-        }
+        .video-btn { background: linear-gradient(45deg, #cc2b5e 0%, #753a88 100%); color: white; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 18px; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .video-item { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; }
         .video-info h4 { font-size: 14px; margin-bottom: 5px; color: #fff; }
         .video-info p { font-size: 12px; color: #aaa; }
-        .video-action button { 
-            background: var(--primary-gold); border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;
-        }
+        .video-action button { background: var(--primary-gold); border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
-        /* --- Prediction Styles --- */
-        .prediction-btn {
-            background: linear-gradient(45deg, #2193b0 0%, #6dd5ed 100%);
-            color: white; padding: 15px; width: 100%; border-radius: 10px;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px;
-        }
-        .pred-card {
-            background: #1e293b; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #334155;
-            text-align: center;
-        }
+        .prediction-btn { background: linear-gradient(45deg, #2193b0 0%, #6dd5ed 100%); color: white; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 18px; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .pred-card { background: #1e293b; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #334155; text-align: center; }
         .pred-question { font-size: 16px; margin-bottom: 15px; font-weight: bold; color: white; }
         .pred-options { display: flex; gap: 15px; justify-content: center; }
-        .pred-opt-btn {
-            flex: 1; padding: 15px; background: #0f172a; border: 2px solid #334155; border-radius: 10px;
-            cursor: pointer; transition: 0.3s; color: #ccc;
-        }
+        .pred-opt-btn { flex: 1; padding: 15px; background: #0f172a; border: 2px solid #334155; border-radius: 10px; cursor: pointer; transition: 0.3s; color: #ccc; }
         .pred-opt-btn.selected { border-color: var(--primary-gold); background: rgba(212, 175, 55, 0.1); color: white; }
         .pred-status { margin-top: 10px; font-size: 12px; color: #aaa; }
 
-        /* --- Ad Timer Overlay --- */
-        #adTimerOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 6000;
-            flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        }
-        .timer-circle {
-            width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--primary-gold);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 30px; font-weight: bold; color: var(--primary-gold); margin-bottom: 20px;
-        }
+        #adTimerOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .timer-circle { width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--primary-gold); display: flex; justify-content: center; align-items: center; font-size: 30px; font-weight: bold; color: var(--primary-gold); margin-bottom: 20px; }
 
-        /* History Page Styles */
-        .full-page-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); z-index: 4000; overflow-y: auto; padding: 20px;
-        }
-        .page-header {
-            display: flex; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px;
-        }
+        .full-page-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 4000; overflow-y: auto; padding: 20px; }
+        .page-header { display: flex; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
         .back-btn { font-size: 24px; color: var(--primary-gold); margin-right: 15px; cursor: pointer; }
         .history-tabs { display: flex; justify-content: space-around; margin-bottom: 20px; }
         .h-tab { padding: 8px 20px; border-radius: 20px; background: #1e293b; color: #aaa; cursor: pointer; }
         .h-tab.active { background: var(--primary-gold); color: #000; font-weight: bold; }
         
-        .history-item {
-            background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 10px;
-            border-left: 4px solid var(--primary-gold); display: flex; justify-content: space-between; align-items: center;
-        }
+        .history-item { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--primary-gold); display: flex; justify-content: space-between; align-items: center; }
         .status-badge { padding: 3px 8px; border-radius: 5px; font-size: 11px; text-transform: uppercase; }
         .status-pending { background: #f59e0b; color: black; }
         .status-approved { background: #10b981; color: white; }
@@ -478,29 +306,18 @@
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- New Team Tree CSS --- */
-        .upline-card {
-            background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981;
-            border-radius: 10px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;
-        }
+        .upline-card { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 10px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
         .upline-icon { font-size: 30px; color: #10b981; }
         
         .team-node { margin-left: 10px; display: none; border-left: 1px dashed #475569; }
         .team-node.open { display: block; }
-        .team-member-card {
-            background: #1e293b; padding: 12px; margin: 8px 0 8px 10px; border-radius: 8px;
-            border: 1px solid #334155; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            position: relative;
-        }
+        .team-member-card { background: #1e293b; padding: 12px; margin: 8px 0 8px 10px; border-radius: 8px; border: 1px solid #334155; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: relative; }
         .team-member-card:hover { border-color: var(--primary-gold); }
-        .team-member-card::before {
-            content: ''; position: absolute; left: -11px; top: 50%; width: 10px; height: 1px; background: #475569;
-        }
+        .team-member-card::before { content: ''; position: absolute; left: -11px; top: 50%; width: 10px; height: 1px; background: #475569; }
         .member-info div:first-child { font-weight: bold; color: white; font-size: 14px; }
         .member-info div:last-child { font-size: 11px; color: #94a3b8; }
         .expand-icon { color: var(--primary-gold); transition: 0.3s; }
         .expanded > .team-member-card .expand-icon { transform: rotate(90deg); }
-
     </style>
 </head>
 <body>
@@ -572,6 +389,31 @@
         </div>
     </div>
 
+    <!-- NEW FEATURE: Welcome Modal Ad (Shows after successful login) -->
+    <div id="welcomeAdModal" class="modal" style="z-index: 9999; background: rgba(0,0,0,0.9);">
+        <div class="modal-content" style="text-align: center; border: 2px solid var(--primary-gold);">
+            <h2 style="color: var(--primary-gold); margin-bottom: 15px;">স্বাগতম!</h2>
+            <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">বিজ্ঞাপনটি লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>
+            
+            <!-- Banner Ad Inside Welcome Popup -->
+            <div style="display:flex; justify-content:center; margin: 10px 0; min-height: 250px;">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '907051bd51674475af890ce0e6ba2177',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/907051bd51674475af890ce0e6ba2177/invoke.js"></script>
+            </div>
+
+            <button id="closeWelcomeAdBtn" class="gold-btn" style="background: #334155; color: white; display: none;" onclick="closeModal('welcomeAdModal')">এগিয়ে যান (Skip)</button>
+            <p id="welcomeAdTimer" style="color: var(--danger); font-weight: bold; margin-top: 10px;">অপেক্ষা করুন <span id="wAdSec">5</span>s...</p>
+        </div>
+    </div>
+
     <!-- Main App Container -->
     <div class="container" id="appContainer">
         
@@ -603,7 +445,7 @@
             <div class="marquee-container">
                 <i class="fas fa-bullhorn marquee-icon"></i>
                 <marquee direction="left" id="payoutMarquee">
-                    Trust Invest এ আপনাকে স্বাগতম...
+                    Earn Money অ্যাপে আপনাকে স্বাগতম...
                 </marquee>
             </div>
 
@@ -644,8 +486,6 @@
                 <i class="fas fa-trophy"></i> টপ লিডারবোর্ড
             </button>
 
-            <!-- Promo Code Removed -->
-
             <h3 style="margin-bottom: 15px; color: var(--primary-gold); border-left: 4px solid var(--primary-gold); padding-left: 10px;">জনপ্রিয় প্ল্যান সমূহ</h3>
             
             <div id="planListContainer">
@@ -655,8 +495,6 @@
 
         <!-- TASK TAB -->
         <div id="taskTab" class="tab-content">
-            <!-- Daily Task (Claim) Removed -->
-
             <!-- Scratch Card Section -->
             <h3 style="margin: 15px 0; border-left: 4px solid var(--primary-gold); padding-left: 10px; color:white;">ডেইলি স্ক্র্যাচ কার্ড</h3>
             <div class="scratch-wrapper">
@@ -694,14 +532,14 @@
                 <i class="fas fa-arrow-right"></i>
             </button>
 
-            <!-- Video Zone (New Feature) -->
+            <!-- Video Zone -->
             <button class="video-btn" onclick="openVideoZone()">
                 <span><i class="fab fa-youtube"></i> ভিডিও জোন</span>
                 <i class="fas fa-arrow-right"></i>
             </button>
             <p style="text-align: center; font-size: 12px; color: #aaa; margin-top: 5px;">ভিডিও দেখে টাকা আয় করুন</p>
 
-            <!-- Prediction (New Feature) -->
+            <!-- Prediction -->
             <button class="prediction-btn" onclick="openPredictions()">
                 <span><i class="fas fa-chart-pie"></i> প্রেডিকশন</span>
                 <i class="fas fa-arrow-right"></i>
@@ -721,11 +559,6 @@
             </button>
             <p style="text-align: center; font-size: 12px; color: #aaa; margin-top: 10px;">কুইজ খেলে পয়েন্ট জিতুন</p>
 
-            <!-- Popunder Script Injection Area -->
-            <div id="adContainer"></div>
-            
-            <!-- Popunder Ad Script (Triggers on Task Interaction) -->
-            <script type="text/javascript" src="https://pl28600237.effectivegatecpm.com/e7/c1/b8/e7c1b84ed76f6c52d7ac60a97c58aa8a.js"></script>
         </div>
 
         <!-- TEAM TAB -->
@@ -791,8 +624,6 @@
                      <i class="fas fa-clipboard-list" style="margin-right: 15px; font-size: 20px;"></i> আমার জব পোস্ট (My Jobs)
                 </div>
             </div>
-
-             <!-- Admin / Demo Data Tools Removed -->
 
             <div style="background: var(--card-bg); border-radius: 10px; overflow: hidden;">
                 <div class="action-item" style="display: flex; align-items: center; text-align: left; padding: 15px; border-bottom: 1px solid #334155;" onclick="openHistoryPage()">
@@ -1026,7 +857,6 @@
                 <div class="input-group">
                     <input type="text" id="depTrx" placeholder="Transaction ID (TrxID)" required>
                 </div>
-                <!-- Image Upload UI (Visual only) -->
                 <div class="file-upload-wrapper" onclick="document.getElementById('depScreenshot').click()">
                     <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: var(--primary-gold);"></i>
                     <p style="font-size: 12px; color: #ccc; margin-top: 5px;">স্ক্রিনশট আপলোড করুন (Optional)</p>
@@ -1104,7 +934,6 @@
             <h2>লিডারবোর্ড</h2>
             <div class="info-box">সর্বোচ্চ ইনকামকারী ১০ জন ইউজার</div>
             <div id="leaderboardList" style="max-height: 300px; overflow-y: auto;">
-                <!-- List will populate here -->
                 <p style="text-align: center; color: #aaa;">লোড হচ্ছে...</p>
             </div>
         </div>
@@ -1167,7 +996,6 @@
                 <div class="input-group">
                     <textarea id="jobProofText" rows="3" placeholder="কাজের প্রমাণ লিখুন (Proof)" required></textarea>
                 </div>
-                <!-- Job Proof Screenshot UI -->
                 <div class="file-upload-wrapper" onclick="document.getElementById('jobProofImage').click()">
                     <i class="fas fa-image" style="font-size: 24px; color: var(--primary-gold);"></i>
                     <p style="font-size: 12px; color: #ccc; margin-top: 5px;">প্রুভ স্ক্রিনশট দিন (Optional)</p>
@@ -1185,7 +1013,6 @@
             <span class="close-btn" onclick="closeModal('viewSubmissionsModal')">&times;</span>
             <h2>কাজের প্রমাণসমূহ</h2>
             <div id="submissionListContainer" style="max-height: 400px; overflow-y: auto;">
-                <!-- Loaded dynamically -->
             </div>
         </div>
     </div>
@@ -1262,7 +1089,7 @@
             withdrawCharge: 5,
             minBalanceForPosterReq: 300,
             posterApprovalFee: 50,
-            marqueeText: "Welcome to Trust Invest",
+            marqueeText: "Earn Money অ্যাপে আপনাকে স্বাগতম",
             privacyLink: "https://google.com",
             forgotPassLink: "https://t.me/...",
             channelLink: "https://t.me/...",
@@ -1272,15 +1099,15 @@
             captchaReward: 0.10,
             scratchRewardMin: 1,
             scratchRewardMax: 5,
-            appVersion: "1.0.0", // New for Update Check
-            maintenance: false, // New for Maintenance Mode
-            appDownloadLink: "https://google.com" // Update Link
+            appVersion: "1.0.0", 
+            maintenance: false, 
+            appDownloadLink: "https://google.com" 
         };
         let plans = [];
         let quizzes = [];
         let loadedJobs = {};
 
-        // Helper: SweetAlert Toast (NEW FEATURE)
+        // Helper: SweetAlert Toast 
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -1303,22 +1130,56 @@
             });
         }
 
+        // --- POPUNDER AD INJECTION FUNCTION (NEW) ---
+        let popunderInjected = false;
+        function injectPopunder() {
+            if(!popunderInjected) {
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://pl28600237.effectivegatecpm.com/e7/c1/b8/e7c1b84ed76f6c52d7ac60a97c58aa8a.js';
+                document.body.appendChild(script);
+                popunderInjected = true;
+            }
+        }
+
+        // --- WELCOME AD POPUP FUNCTION (NEW) ---
+        function showWelcomeAd() {
+            const modal = document.getElementById('welcomeAdModal');
+            modal.style.display = 'flex';
+            const closeBtn = document.getElementById('closeWelcomeAdBtn');
+            const timerText = document.getElementById('welcomeAdTimer');
+            const secSpan = document.getElementById('wAdSec');
+            
+            closeBtn.style.display = 'none';
+            timerText.style.display = 'block';
+            
+            let left = 5;
+            secSpan.innerText = left;
+            
+            const intv = setInterval(() => {
+                left--;
+                secSpan.innerText = left;
+                if(left <= 0) {
+                    clearInterval(intv);
+                    timerText.style.display = 'none';
+                    closeBtn.style.display = 'block';
+                }
+            }, 1000);
+        }
+
         // --- INIT & DATA LOADING ---
         function loadGlobalData() {
-            // Load Settings
             db.ref('settings').on('value', (snapshot) => {
                 if(snapshot.exists()) {
                     appSettings = { ...appSettings, ...snapshot.val() };
                     updateDOMWithSettings();
                     
-                    // Maintenance Mode Check
                     if(appSettings.maintenance) {
                         document.body.innerHTML = '<div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; color:white; text-align:center; background:#0f172a;"><i class="fas fa-tools" style="font-size:50px; color:#d4af37; margin-bottom:20px;"></i><h1>🚧 রক্ষণাবেক্ষণ চলছে 🚧</h1><p>সার্ভার আপডেটের কাজ চলছে। দয়া করে কিছুক্ষণ পর চেষ্টা করুন।</p></div>';
                         return;
                     }
 
-                    // App Version Check
-                    const currentVersion = "1.0.0"; // Change this when releasing update
+                    const currentVersion = "1.0.0"; 
                     if(appSettings.appVersion && appSettings.appVersion !== currentVersion) {
                         Swal.fire({
                             title: "নতুন আপডেট!",
@@ -1332,7 +1193,6 @@
                     }
                 }
             });
-            // Load Plans
             db.ref('plans').on('value', (snapshot) => {
                 plans = [];
                 if(snapshot.exists()) {
@@ -1345,7 +1205,6 @@
                     document.getElementById('planListContainer').innerHTML = "<p style='text-align:center; padding:20px;'>বর্তমানে কোনো প্ল্যান নেই</p>";
                 }
             });
-            // Load Quizzes
             db.ref('quizzes').on('value', (snapshot) => {
                 quizzes = [];
                 if(snapshot.exists()) {
@@ -1355,7 +1214,6 @@
                     });
                 }
             });
-            // Load Leaderboard
             loadLeaderboard();
         }
         loadGlobalData();
@@ -1387,10 +1245,9 @@
             });
         }
 
-        // --- AUTH LOGIC (Updated with Email Verification & Real-time Ban) ---
+        // --- AUTH LOGIC ---
         auth.onAuthStateChanged(user => {
             if (user) {
-                // CHECK IF EMAIL VERIFIED
                 if (!user.emailVerified) {
                     currentUser = user;
                     document.getElementById('authOverlay').style.display = 'none';
@@ -1404,11 +1261,9 @@
                 document.getElementById('appContainer').style.display = 'block';
                 document.getElementById('footerNav').style.display = 'flex';
                 
-                // Load User Data & Setup Real-time Ban Listener
                 loadUserData();
                 loadNotifications();
 
-                // Real-time Ban Check Hook
                 db.ref('users/' + user.uid + '/isBanned').on('value', snap => {
                     if(snap.exists() && snap.val() === true) {
                         auth.signOut();
@@ -1461,13 +1316,11 @@
             document.getElementById('displayRefCode').innerText = userData.refCode || "No Code";
             document.getElementById('editNameInput').value = userData.name;
             
-            // Handle Upline Display
             const bindSec = document.getElementById('bindRefSection');
             const uplineContainer = document.getElementById('uplineContainer');
             if (userData.upline) {
                 bindSec.style.display = 'none';
                 uplineContainer.style.display = 'block';
-                // Fetch upline name
                 db.ref('users').orderByChild('refCode').equalTo(userData.upline).once('value', s => {
                     if (s.exists()) {
                         s.forEach(c => document.getElementById('uplineName').innerText = c.val().name);
@@ -1478,17 +1331,12 @@
                 uplineContainer.style.display = 'none';
             }
 
-            // Check Poster Status for UI
             checkJobPosterStatus();
-
-            // Daily Claim UI update removed as requested
         }
 
-        // --- AUTH ACTIONS (UPDATED WITH LOADING) ---
+        // --- AUTH ACTIONS ---
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            // UI Loading State
             const loginBtn = document.querySelector('#loginForm button[type="submit"]');
             const originalText = loginBtn.innerText;
             loginBtn.disabled = true;
@@ -1499,8 +1347,8 @@
 
             auth.signInWithEmailAndPassword(email, pass)
                 .then(() => {
-                    // Success is handled by onAuthStateChanged
                     loginBtn.innerText = "সফল হয়েছে!";
+                    showWelcomeAd(); // Show ad after successful login
                 })
                 .catch(err => {
                     loginBtn.disabled = false;
@@ -1511,8 +1359,6 @@
 
         document.getElementById('signupForm').addEventListener('submit', (e) => {
             e.preventDefault();
-
-            // UI Loading State
             const signupBtn = document.querySelector('#signupForm button[type="submit"]');
             const originalText = signupBtn.innerText;
             signupBtn.disabled = true;
@@ -1536,13 +1382,11 @@
                 return showAlert("পাসওয়ার্ড অন্তত ৬ সংখ্যার হতে হবে", 'warning');
             }
 
-            // Fetch IP for Tracking (Admin Feature Hook)
             fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
             .then(data => data.ip)
-            .catch(() => "Unknown") // Fallback if API fails
+            .catch(() => "Unknown") 
             .then(userIP => {
-                // Continue with Signup
                 auth.createUserWithEmailAndPassword(email, pass).then(cred => {
                     const uid = cred.user.uid;
                     const newRefCode = "REF" + Math.floor(100000 + Math.random() * 900000);
@@ -1561,16 +1405,13 @@
                         lastClaim: 0,
                         hasDeposited: false,
                         isBanned: false,
-                        ip: userIP // Storing IP
+                        ip: userIP
                     };
 
-                    // Save user data
                     db.ref('users/' + uid).set(newUser).then(() => {
                         if (refCode) handleReferral(refCode, uid);
                         
-                        // Send Verification Email
                         cred.user.sendEmailVerification().then(() => {
-                            // Sign out immediately
                             auth.signOut().then(() => {
                                 signupBtn.disabled = false;
                                 signupBtn.innerText = originalText;
@@ -1607,7 +1448,6 @@
             auth.signOut().then(() => location.reload());
         }
 
-        // Resend Verification Email
         function resendVerification() {
             if(currentUser) {
                 currentUser.sendEmailVerification()
@@ -1616,7 +1456,6 @@
             }
         }
 
-        // NEW FEATURE: Password Reset via Email
         function resetPassword() {
             const email = document.getElementById('loginEmail').value;
             if(!email) return showToast('warning', 'লগইন বক্সে ইমেইল লিখুন');
@@ -1652,7 +1491,6 @@
             }
         }
 
-        // --- UI UTILS: File Upload ---
         function handleFileSelect(inputId, displayId) {
             const input = document.getElementById(inputId);
             const display = document.getElementById(displayId);
@@ -1662,7 +1500,6 @@
             }
         }
 
-        // --- NOTIFICATIONS & LEADERBOARD ---
         function loadNotifications() {
             db.ref('notifications').on('value', snapshot => {
                 const list = document.getElementById('notifList');
@@ -1690,7 +1527,7 @@
                 list.innerHTML = '';
                 let users = [];
                 snapshot.forEach(c => users.push(c.val()));
-                users.reverse(); // Highest first
+                users.reverse(); 
                 
                 users.forEach((u, index) => {
                     const item = document.createElement('div');
@@ -1706,8 +1543,6 @@
                 });
             });
         }
-
-        // --- MAIN APP LOGIC (SECURED) ---
 
         function renderPlans() {
             const container = document.getElementById('planListContainer');
@@ -1752,7 +1587,6 @@
             });
         }
 
-        // SECURED: Use Transaction for Plan Purchase
         function buyPlan(planId) {
             const plan = plans.find(p => p.id === planId);
             if (!plan) return;
@@ -1767,7 +1601,7 @@
                 db.ref('users/' + currentUser.uid).transaction(currentUserData => {
                     if (currentUserData === null) return currentUserData;
                     if ((currentUserData.balance || 0) < plan.price) {
-                        return; // Abort transaction if insufficient funds
+                        return; 
                     }
                     currentUserData.balance -= plan.price;
                     currentUserData.vipLevel = plan.id;
@@ -1842,16 +1676,12 @@
             });
         }
 
-        // Daily Claim Removed
-
-        // --- NEW FEATURE: SCRATCH CARD ---
         function initScratchCard() {
             const canvas = document.getElementById('scratchCanvas');
             const ctx = canvas.getContext('2d');
             const wrapper = document.querySelector('.scratch-wrapper');
             const today = new Date().toDateString();
 
-            // Reset if needed
             ctx.clearRect(0,0,300,150);
 
             if (userData.lastScratch === today) {
@@ -1864,13 +1694,11 @@
                 wrapper.style.pointerEvents = 'auto';
             }
 
-            // Set Reward behind canvas (Dynamic from Admin)
             const min = appSettings.scratchRewardMin || 1;
             const max = appSettings.scratchRewardMax || 5;
             const reward = Math.floor(Math.random() * (max - min + 1)) + min;
             document.getElementById('scratchAmount').innerText = "৳" + reward;
 
-            // Draw Cover
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = '#C0C0C0';
             ctx.fillRect(0, 0, 300, 150);
@@ -1893,15 +1721,13 @@
                 ctx.fill();
                 scratchedPixels++;
 
-                // Trigger win after some scratching
                 if (scratchedPixels > 150) { 
                     isDrawing = false;
-                    canvas.style.display = 'none'; // Reveal all
+                    canvas.style.display = 'none'; 
                     
-                    // Award
                     db.ref('users/' + currentUser.uid).transaction(d => {
                         if(d) { 
-                            if(d.lastScratch === today) return; // double check
+                            if(d.lastScratch === today) return; 
                             d.incomeWallet = (d.incomeWallet||0) + reward; 
                             d.lastScratch = today; 
                         }
@@ -1918,15 +1744,17 @@
             canvas.addEventListener('touchmove', scratch);
         }
 
-        // --- SPIN WHEEL LOGIC (SECURED) ---
-        function openSpinModal() { openModal('spinModal'); }
+        function openSpinModal() { 
+            injectPopunder();
+            openModal('spinModal'); 
+        }
         
         function spinWheel() {
             const today = new Date().toDateString();
             if(userData.lastSpin === today) return showToast('warning', "আজকের স্পিন শেষ! আগামীকাল আবার চেষ্টা করুন।");
 
             const wheel = document.getElementById('wheel');
-            const deg = Math.floor(3600 + Math.random() * 360); // Minimum 10 spins
+            const deg = Math.floor(3600 + Math.random() * 360); 
             wheel.style.transform = `rotate(${deg}deg)`;
 
             setTimeout(() => {
@@ -1949,7 +1777,6 @@
             }, 4000);
         }
 
-        // --- DEPOSIT & WITHDRAW ---
         document.getElementById('depositForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('button[type="submit"]');
@@ -1958,11 +1785,9 @@
             const method = document.getElementById('depMethod').value;
             const trx = document.getElementById('depTrx').value;
             
-            // Image (Simulated)
             const fileInput = document.getElementById('depScreenshot');
             const fileName = (fileInput.files && fileInput.files[0]) ? fileInput.files[0].name : "No Image";
 
-            // Validation
             if (amount <= 0) return showToast('error', "সঠিক পরিমাণ দিন।");
             if (amount > 5000) return showToast('error', "সর্বোচ্চ ডিপোজিট ৫০০০ টাকা।");
             if (amount < appSettings.minDeposit) return showToast('error', `মিনিমাম ডিপোজিট ${appSettings.minDeposit} টাকা।`);
@@ -1994,7 +1819,6 @@
             const method = document.getElementById('withMethod').value;
             const number = document.getElementById('withNumber').value;
             
-            // VALIDATION: Phone Regex
             const phoneRegex = /^01[3-9]\d{8}$/;
             if (!phoneRegex.test(number)) return showToast('error', "সঠিক বাংলাদেশি মোবাইল নাম্বার দিন (যেমন: 017...)");
 
@@ -2009,10 +1833,9 @@
             const fee = amount * (appSettings.withdrawCharge / 100);
             const final = amount - fee;
 
-            // SECURED: Deduct Balance First via Transaction
             db.ref('users/' + currentUser.uid).transaction(d => {
                 if(d) {
-                    if((d.incomeWallet || 0) < amount) return; // abort
+                    if((d.incomeWallet || 0) < amount) return; 
                     d.incomeWallet -= amount;
                 }
                 return d;
@@ -2049,7 +1872,6 @@
             document.getElementById('receiveAmount').innerText = (amt - fee).toFixed(2);
         }
 
-        // --- TEAM & HIERARCHY (NEW 5-LEVEL SYSTEM) ---
         function copyRefCode() {
             const code = userData.refCode;
             if(code) { navigator.clipboard.writeText(code); showToast('success', "রেফার কোড কপি হয়েছে"); }
@@ -2067,13 +1889,11 @@
             });
         }
 
-        // Recursive function to load team
         function loadTeamTree() {
             if(!userData.refCode) return;
             const root = document.getElementById('teamTreeRoot');
             root.innerHTML = '';
             
-            // Fetch Level 1 (Direct Referrals)
             db.ref('users').orderByChild('upline').equalTo(userData.refCode).once('value', snapshot => {
                 if(snapshot.exists()) {
                     snapshot.forEach(child => {
@@ -2083,7 +1903,6 @@
                 } else {
                     root.innerHTML = '<p style="text-align:center; color:#666; padding: 20px;">কোন মেম্বার নেই</p>';
                 }
-                // Calculate ref income sum locally or use stored value
                 document.getElementById('refIncome').innerText = (userData.refIncome || 0).toFixed(2);
             });
         }
@@ -2104,7 +1923,6 @@
             
             container.appendChild(card);
 
-            // Container for children
             const childrenContainer = document.createElement('div');
             childrenContainer.className = 'team-node';
             container.appendChild(childrenContainer);
@@ -2112,12 +1930,10 @@
             if (level < 5) {
                 card.onclick = (e) => {
                     e.stopPropagation();
-                    // Toggle Open
                     if (childrenContainer.classList.contains('open')) {
                         childrenContainer.classList.remove('open');
                         container.classList.remove('expanded');
                     } else {
-                        // Check if loaded
                         if (childrenContainer.innerHTML === '') {
                              childrenContainer.innerHTML = '<p style="font-size:10px; color:#aaa; padding:5px;">Loading...</p>';
                              db.ref('users').orderByChild('upline').equalTo(member.refCode).once('value', snap => {
@@ -2141,9 +1957,8 @@
         }
 
 
-        // --- JOB SYSTEM ---
-
         function openJobSystem(tab = 'allJobs') {
+            injectPopunder();
             document.getElementById('jobOverlay').style.display = 'block';
             checkJobPosterStatus();
             const navItems = document.querySelectorAll('.job-nav-item');
@@ -2429,7 +2244,6 @@
             const proof = document.getElementById('jobProofText').value;
             const reward = parseFloat(document.getElementById('submitJobModal').dataset.reward);
 
-            // Image (Simulated)
             const fileInput = document.getElementById('jobProofImage');
             const fileName = (fileInput.files && fileInput.files[0]) ? fileInput.files[0].name : "";
 
@@ -2446,7 +2260,7 @@
                     workerUid: currentUser.uid,
                     workerName: userData.name,
                     proof: proof,
-                    proofImage: fileName, // Saving file name
+                    proofImage: fileName, 
                     reward: reward,
                     status: 'pending',
                     date: new Date().toISOString()
@@ -2491,7 +2305,6 @@
             });
         }
 
-        // --- UTILS ---
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         
@@ -2513,7 +2326,6 @@
             else showToast('info', "লিংক সেট করা হয়নি");
         }
 
-        // --- HISTORY PAGE ---
         function openHistoryPage() {
             document.getElementById('historyPage').style.display = 'block';
             loadHistory('depHistory');
@@ -2559,7 +2371,6 @@
             });
         }
 
-        // --- QUIZ LOGIC ---
         let currentQuizIndex = 0; 
         let quizScore = 0; 
         let correctStreak = 0; 
@@ -2568,6 +2379,7 @@
         function startQuiz() {
             if (!quizzes || quizzes.length === 0) return showToast('info', "বর্তমানে কোনো কুইজ নেই।");
             
+            injectPopunder();
             document.getElementById('quizOverlay').style.display = 'block';
             activeQuizzes = [...quizzes].sort(() => 0.5 - Math.random());
             currentQuizIndex = 0; 
@@ -2643,11 +2455,11 @@
             document.getElementById('streakCount').innerText = correctStreak;
         }
 
-        // --- CAPTCHA ENTRY LOGIC (Added) ---
         let currentCaptcha = "";
         let isCaptchaCoolingDown = false;
 
         function openCaptcha() {
+            injectPopunder();
             if(isCaptchaCoolingDown) return showToast('warning', "অনুগ্রহ করে অপেক্ষা করুন...");
             openModal('captchaModal');
             generateCaptcha();
@@ -2668,8 +2480,7 @@
         function submitCaptcha() {
             const userInput = document.getElementById('captchaInput').value.trim().toUpperCase();
             if (userInput === currentCaptcha) {
-                // Correct
-                const reward = appSettings.captchaReward || 0.10; // Default reward
+                const reward = appSettings.captchaReward || 0.10; 
                 db.ref('users/' + currentUser.uid).transaction(d => {
                     if(d) d.incomeWallet = (d.incomeWallet || 0) + reward;
                     return d;
@@ -2702,7 +2513,6 @@
             }, 1000);
         }
 
-        // --- LOTTERY SYSTEM LOGIC (Added) ---
         let activeLottery = null;
 
         function openLottery() {
@@ -2744,18 +2554,16 @@
             }
 
             if(confirm(`${price} টাকা দিয়ে লটারি টিকেট কিনবেন?`)) {
-                // Generate unique ticket ID
                 const ticketId = "T-" + Math.floor(100000 + Math.random() * 900000);
 
                 db.ref('users/' + currentUser.uid).transaction(d => {
                     if(d) {
-                        if((d.balance || 0) < price) return; // abort
+                        if((d.balance || 0) < price) return; 
                         d.balance -= price;
                     }
                     return d;
                 }, (error, committed) => {
                     if(committed) {
-                        // Add to participants
                         const entry = {
                             uid: currentUser.uid,
                             name: userData.name,
@@ -2763,8 +2571,6 @@
                             date: new Date().toISOString()
                         };
                         db.ref('lottery_participants').push(entry);
-                        
-                        // Add to user's ticket list (optional, but good for quick access)
                         db.ref('users/' + currentUser.uid + '/tickets').push(entry);
                         
                         showAlert(`টিকেট কেনা সফল হয়েছে! আপনার টিকেট নাম্বার: ${ticketId}`, 'success');
@@ -2796,8 +2602,8 @@
             });
         }
 
-        // --- NEW FEATURE 1: VIDEO ZONE LOGIC ---
         function openVideoZone() {
+            injectPopunder();
             document.getElementById('videoOverlay').style.display = 'block';
             loadVideos();
         }
@@ -2809,7 +2615,7 @@
                 if(snapshot.exists()) {
                     snapshot.forEach(child => {
                         const video = child.val();
-                        const videoId = child.key; // The Firebase key
+                        const videoId = child.key; 
                         const item = document.createElement('div');
                         item.className = 'video-item';
                         item.innerHTML = `
@@ -2870,12 +2676,12 @@
 
         function closeVideoPlayer() {
             document.getElementById('videoPlayerModal').style.display = 'none';
-            document.getElementById('playerWrapper').innerHTML = ''; // Stop video
+            document.getElementById('playerWrapper').innerHTML = ''; 
             clearInterval(videoTimerInterval);
         }
 
-        // --- NEW FEATURE 2: PREDICTION LOGIC ---
         function openPredictions() {
+            injectPopunder();
             document.getElementById('predictionOverlay').style.display = 'block';
             loadPredictions();
         }
@@ -2934,7 +2740,6 @@
             }
         }
 
-        // --- AD SYSTEM ---
         let adCallback = null;
         function triggerAdBreak(cb) {
             adCallback = cb;
@@ -2963,7 +2768,6 @@
             adCallback = null;
         }
         
-        // Profile & Promo
         function updateProfile() {
             const newName = document.getElementById('editNameInput').value;
             db.ref('users/' + currentUser.uid).update({name: newName}).then(() => {
@@ -2975,8 +2779,6 @@
                 } else { showAlert("নাম আপডেট হয়েছে", 'success'); closeModal('editProfileModal'); }
             });
         }
-
-        // Promo Code Logic Removed
     </script>
 </body>
 </html>
